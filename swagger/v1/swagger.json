@@ -73,7 +73,7 @@
             }
           },
           "404": {
-            "description": "currency not found"
+            "description": "currencies not found"
           },
           "406": {
             "description": "unsupported accept header"

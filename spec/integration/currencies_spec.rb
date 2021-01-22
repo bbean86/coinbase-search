@@ -1,18 +1,17 @@
 require 'swagger_helper'
 
 describe 'Currencies API' do
-  after do |example|
-    example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) }
-  end
-
-  path '/currencies' do
+  path '/api/v1/currencies' do
     get 'Searches for the currency on Coinbase Pro' do
       tags 'Currencies'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :name, in: :query, type: :string
-      parameter name: :limit, in: :query, type: :integer
-      parameter name: :cursor, in: :query, type: :string
+      parameter name: :name, in: :query, type: :string, description: 'String containing a currency name or portion of name'
+      parameter name: :limit, in: :query, type: :integer, description: 'Integer indicating the maximum number of records the API should return'
+      parameter name: :cursor, in: :query, type: :string, description: 'String in Base64 containing the cursor for pagination to start from'
+
+      let(:limit) { 10 }
+      let(:cursor) { Base64.encode64('before__Bitcoin') }
 
       response '200', 'currencies found' do
         schema type: :object,
@@ -43,11 +42,16 @@ describe 'Currencies API' do
       response '404', 'currencies not found' do
         let(:name) { 'foobar' }
 
+        before do
+          allow(ExecuteSearch).to receive(:call).and_return(nil)
+        end
+
         run_test!
       end
 
       response '406', 'unsupported accept header' do
         let(:Accept) { 'application/foo' }
+        let(:name) { 'Bit' }
         run_test!
       end
     end
