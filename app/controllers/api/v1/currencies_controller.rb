@@ -12,6 +12,6 @@ class Api::V1::CurrenciesController < ApplicationController
   private
 
   def search_params
-    params.permit(:name, :limit, :cursor)
+    params.permit(:name, :limit, :cursor).merge(search_type: :currencies, expires_at: Time.now + 1.day)
   end
 end

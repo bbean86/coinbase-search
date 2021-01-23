@@ -6,9 +6,9 @@ describe 'Currencies API' do
       tags 'Currencies'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :name, in: :query, type: :string, description: 'String containing a currency name or portion of name'
-      parameter name: :limit, in: :query, type: :integer, description: 'Integer indicating the maximum number of records the API should return'
-      parameter name: :cursor, in: :query, type: :string, description: 'String in Base64 containing the cursor for pagination to start from'
+      parameter name: :name, in: :query, type: :string, description: 'contains a currency name or portion of name'
+      parameter name: :limit, in: :query, type: :integer, description: 'indicates the maximum number of records the API should return'
+      parameter name: :cursor, in: :query, type: :string, description: 'contains the cursor for pagination to start from, in Base64'
 
       let(:limit) { 10 }
       let(:cursor) { Base64.encode64('before__Bitcoin') }
