@@ -84,7 +84,7 @@ describe CoinbaseClient do
         ]
       end
 
-      expect(client.currencies).to eq([OpenStruct.new(name: 'Bitcoin', symbol: 'BTC'), OpenStruct.new(name: 'United States Dollar', symbol: 'USD')])
+      expect(client.currencies).to eq([{ name: 'Bitcoin', symbol: 'BTC' }, { name: 'United States Dollar', symbol: 'USD' }])
       stubs.verify_stubbed_calls
     end
   end

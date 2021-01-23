@@ -35,8 +35,8 @@ gem 'dotenv-rails'
 # HTTP Request wrapper
 gem 'faraday', '~> 1.3'
 
-# Fuzzy String Matching
-gem 'fuzzy_match'
+# Easy Search Scoping
+gem 'pg_search'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

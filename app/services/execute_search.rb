@@ -46,9 +46,11 @@ class ExecuteSearch
     end
   end
 
+  COINBASE_PRO_API_ROOT_URL = 'https://api.pro.coinbase.com'.freeze
+
   def connection_opts
     {
-      url: 'https://api.pro.coinbase.com',
+      url: COINBASE_PRO_API_ROOT_URL,
       headers: {
         'Content-Type' => 'application/json',
         'CB-ACCESS-KEY' => ENV['CB_ACCESS_KEY'],
@@ -81,17 +83,26 @@ class ExecuteSearch
 
   def populate_result(search)
     case search.search_type
-    when 'currencies'
-      # coinbase_client.currencies.each { |c| Currency.find_or_create_by(c) }
+    when Search::SEARCH_TYPES[:currencies]
+      populate_currencies
+      populate_currency_result(search)
     else
       raise "#{search.search_type} search not yet implemented"
     end
   end
 
-  def query_currencies(search)
-    # result = FuzzyMatch.new(coinbase_client.currencies, read: :name).find(query_params['name'])
-    # search.result = result.map(&:to_hash)
-    # search.expires_at = expires_at
-    # search.save
+  def populate_currencies
+    currencies_to_persist = coinbase_client.currencies.reject do |c|
+      Coinbase::Currency.find_by(name: c[:name]).present?
+    end
+
+    currencies_to_persist.each do |c|
+      Coinbase::Currency.create(c)
+    end
+  end
+
+  def populate_currency_result(search)
+    search.result = Coinbase::Currency.search_by_name(query_params['name']).limit(limit).map(&:as_json)
+    search.save
   end
 end
