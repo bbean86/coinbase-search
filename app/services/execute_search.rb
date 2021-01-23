@@ -7,11 +7,12 @@ class ExecuteSearch
   attr_reader :search_type, :limit, :cursor, :expires_at, :query_params, :coinbase_client
 
   def initialize(params, adapter = :net_http, stubs = nil)
+    params = params.with_indifferent_access
     @search_type = params.delete(:search_type).to_s
-    @limit = params.delete :limit
+    @limit = params.delete(:limit) || 50
     @cursor = params.delete :cursor
     @expires_at = params.delete :expires_at
-    @query_params = params.with_indifferent_access
+    @query_params = params
     @coinbase_client = CoinbaseClient.new conn(adapter, stubs)
   end
 
@@ -34,7 +35,7 @@ class ExecuteSearch
   end
 
   def search_result(search)
-    Rails.cache.fetch(cache_key) do
+    Rails.cache.fetch(cache_key(search)) do
       return nil unless search.result.present?
 
       {
@@ -82,12 +83,12 @@ class ExecuteSearch
     @existing_search = s
   end
 
-  def cache_key
+  def cache_key(search)
     params = query_params.each_with_object([]) do |p, acc|
       acc.push("#{p[0]}:#{p[1]}")
     end.join('-')
 
-    Digest::SHA1.hexdigest "#{search_type}-#{params}-#{limit}-#{cursor}"
+    'currencies/' + Digest::SHA1.hexdigest("#{search_type}-#{params}-#{limit}-#{cursor}-#{search.expires_at}")
   end
 
   def populate_result(search)
@@ -130,7 +131,7 @@ class ExecuteSearch
     @currencies_by_name ||= if query_params['name'].present?
                               Coinbase::Currency.order(:name).search_by_name(query_params['name'])
                             else
-                              Coinbase::Currency.all.order(:name)
+                              Coinbase::Currency.order(:name)
                             end
   end
 

@@ -1,3 +1,5 @@
+require 'active_support/core_ext/numeric/bytes'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -15,7 +17,7 @@ Rails.application.configure do
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
   if Rails.root.join('tmp', 'caching-dev.txt').exist?
-    config.cache_store = :memory_store
+    config.cache_store = :file_store, Rails.root.join('tmp')
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
@@ -41,7 +43,6 @@ Rails.application.configure do
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
-
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
