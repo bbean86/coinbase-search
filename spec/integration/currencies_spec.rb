@@ -34,7 +34,7 @@ describe 'Currencies API' do
                    }
                  }
                }
-        let(:name) { 'Bit' }
+        let(:name) { 'B' }
 
         run_test!
       end
@@ -42,9 +42,9 @@ describe 'Currencies API' do
       response '404', 'currencies not found' do
         let(:name) { 'foobar' }
 
-        before do
-          allow(ExecuteSearch).to receive(:call).and_return(nil)
-        end
+        # before do
+        #   allow(ExecuteSearch).to receive(:call).and_return(nil)
+        # end
 
         run_test!
       end

@@ -32,6 +32,12 @@ gem 'open_api-rswag-ui'
 # Environment Variable management
 gem 'dotenv-rails'
 
+# HTTP Request wrapper
+gem 'faraday', '~> 1.3'
+
+# Fuzzy String Matching
+gem 'fuzzy_match'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -50,6 +56,7 @@ group :test do
   gem 'database_cleaner'
   gem 'open_api-rswag-specs'
   gem 'shoulda-matchers', '~> 4.0'
+  gem 'timecop'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
