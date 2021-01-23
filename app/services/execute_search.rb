@@ -28,12 +28,14 @@ class ExecuteSearch
   private
 
   def search_result(search)
-    return nil unless search.result.present?
+    Rails.cache.fetch(cache_key) do
+      return nil unless search.result.present?
 
-    {
-      data: search.result,
-      cursor: calculate_cursor(search)
-    }
+      {
+        data: search.result,
+        cursor: calculate_cursor(search)
+      }
+    end
   end
 
   def conn(adapter, stubs)
@@ -60,17 +62,18 @@ class ExecuteSearch
   end
 
   def existing_search
-    @existing_search ||= Rails.cache.fetch(cache_key) do
-      s = Search
-          .by_type(search_type)
-          .by_query(query_params)
-          .by_limit_and_cursor(limit, cursor)
-          .first
+    return @existing_search if @existing_search
 
-      return s unless s.present? && s.expires_at <= Time.now
+    s = Search
+        .by_type(search_type)
+        .by_query(query_params)
+        .by_limit_and_cursor(limit, cursor)
+        .first
 
-      populate_result(s)
-    end
+    return s unless s.present? && s.expires_at <= Time.now
+
+    populate_result(s)
+    @existing_search = s
   end
 
   def cache_key
@@ -126,9 +129,25 @@ class ExecuteSearch
   end
 
   def currencies_cursor(search)
-    previous_name = search.result.any? && search.result.first['name'] == currencies_by_name.to_a.first&.name ? nil : search.result.first['name']
-    next_name = search.result.any? && search.result.last['name'] == currencies_by_name.to_a.last&.name ? nil : search.result.last['name']
+    previous_name = first_search_result_name(search) == first_currency_name ? nil : first_search_result_name(search)
+    next_name = last_search_result_name(search) == last_currency_name ? nil : last_search_result_name(search)
     cursor_hash(previous_name, next_name)
+  end
+
+  def first_search_result_name(search)
+    @first_search_result_name ||= search.result.any? && search.result.first['name']
+  end
+
+  def last_search_result_name(search)
+    @last_search_result_name ||= search.result.any? && search.result.last['name']
+  end
+
+  def first_currency_name
+    currencies_by_name.first&.name
+  end
+
+  def last_currency_name
+    currencies_by_name.last&.name
   end
 
   def cursor_hash(previous_name, next_name)
