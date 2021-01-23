@@ -29,8 +29,8 @@ describe 'Currencies API' do
                  cursor: {
                    type: :object,
                    properties: {
-                     next_page: { type: :string },
-                     previous_page: { type: :string }
+                     next_page: { type: %i[string null] },
+                     previous_page: { type: %i[string null] }
                    }
                  }
                }

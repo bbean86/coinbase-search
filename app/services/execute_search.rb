@@ -11,7 +11,7 @@ class ExecuteSearch
     @limit = params.delete :limit
     @cursor = params.delete :cursor
     @expires_at = params.delete :expires_at
-    @query_params = params
+    @query_params = params.with_indifferent_access
     @coinbase_client = CoinbaseClient.new conn(adapter, stubs)
   end
 
@@ -19,24 +19,22 @@ class ExecuteSearch
     if existing_search.nil?
       search = Search.new(search_type: search_type, query_params: query_params, expires_at: expires_at)
       populate_result(search)
-
-      return nil unless search.result.present?
-
-      {
-        data: search.result,
-        cursor: calculate_cursor(search)
-      }
+      search_result(search)
     else
-      return nil unless existing_search.result.present?
-
-      {
-        data: existing_search.result,
-        cursor: calculate_cursor(existing_search)
-      }
+      search_result(existing_search)
     end
   end
 
   private
+
+  def search_result(search)
+    return nil unless search.result.present?
+
+    {
+      data: search.result,
+      cursor: calculate_cursor(search)
+    }
+  end
 
   def conn(adapter, stubs)
     Faraday.new(connection_opts) do |builder|
@@ -87,15 +85,17 @@ class ExecuteSearch
     case search.search_type
     when Search::SEARCH_TYPES[:currencies]
       populate_currencies
-      populate_currency_result(search)
+      populate_currencies_result(search)
     else
       raise "#{search.search_type} search not yet implemented"
     end
   end
 
   def populate_currencies
+    existing_currency_names = Coinbase::Currency.all.map(&:name)
+
     currencies_to_persist = coinbase_client.currencies.reject do |c|
-      Coinbase::Currency.find_by(name: c[:name]).present?
+      existing_currency_names.include?(c[:name])
     end
 
     currencies_to_persist.each do |c|
@@ -103,8 +103,8 @@ class ExecuteSearch
     end
   end
 
-  def populate_currency_result(search)
-    search.result = Coinbase::Currency.search_by_name(query_params['name']).limit(limit).map do |c|
+  def populate_currencies_result(search)
+    search.result = currencies_by_name.limit(limit).to_a.map do |c|
       c.as_json(only: %i[name symbol])
     end
     search.save
@@ -117,11 +117,27 @@ class ExecuteSearch
     end
   end
 
-  def currencies_cursor(search)
-    previous_name = search.result.any? && search.result.first['name'] == Coinbase::Currency.first&.name ? nil : search.result.first['name']
-    next_name = search.result.any? && search.result.last['name']
+  def currencies_by_name
+    @currencies_by_name ||= if query_params['name'].present?
+                              Coinbase::Currency.search_by_name(query_params['name'])
+                            else
+                              Coinbase::Currency.all
+                            end
+  end
 
-    return {} unless next_name
+  def currencies_cursor(search)
+    previous_name = search.result.any? && search.result.first['name'] == currencies_by_name.to_a.first&.name ? nil : search.result.first['name']
+    next_name = search.result.any? && search.result.last['name'] == currencies_by_name.to_a.last&.name ? nil : search.result.last['name']
+    cursor_hash(previous_name, next_name)
+  end
+
+  def cursor_hash(previous_name, next_name)
+    unless next_name
+      return {
+        previous_page: nil,
+        next_page: nil
+      }
+    end
 
     {
       previous_page: previous_name && Base64.encode64("before__#{previous_name}"),
