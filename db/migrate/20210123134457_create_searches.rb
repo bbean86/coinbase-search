@@ -1,0 +1,14 @@
+class CreateSearches < ActiveRecord::Migration[6.0]
+  def change
+    create_table :searches do |t|
+      t.jsonb :query_params, null: false
+      t.string :search_type, null: false
+      t.jsonb :result
+      t.timestamp :expires_at, null: false
+
+      t.timestamps
+    end
+
+    add_index :searches, %i[query_params search_type]
+  end
+end
