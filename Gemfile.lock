@@ -66,6 +66,10 @@ GEM
     crass (1.0.6)
     database_cleaner (1.8.5)
     diff-lcs (1.4.4)
+    dotenv (2.7.6)
+    dotenv-rails (2.7.6)
+      dotenv (= 2.7.6)
+      railties (>= 3.2)
     erubi (1.10.0)
     ffi (1.14.2)
     globalid (0.4.2)
@@ -105,6 +109,7 @@ GEM
     open_api-rswag-ui (0.1.0)
       actionpack (>= 3.1, < 7.0)
       railties (>= 3.1, < 7.0)
+    pg (1.2.3)
     public_suffix (4.0.6)
     puma (4.3.7)
       nio4r (~> 2.0)
@@ -174,7 +179,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.2)
     thor (1.1.0)
     thread_safe (0.3.6)
     tzinfo (1.2.9)
@@ -191,17 +195,18 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   database_cleaner
+  dotenv-rails
   listen (~> 3.2)
   open_api-rswag-api
   open_api-rswag-specs
   open_api-rswag-ui
+  pg
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.4)
   rspec
   rspec-rails
   spring
   spring-watcher-listen (~> 2.0.0)
-  sqlite3 (~> 1.4)
   tzinfo-data
 
 RUBY VERSION
