@@ -11,7 +11,7 @@ class ExecuteSearch
     @limit = params.delete :limit
     @cursor = params.delete :cursor
     @expires_at = params.delete :expires_at
-    @query_params = params.to_hash
+    @query_params = params
   end
 
   def execute
