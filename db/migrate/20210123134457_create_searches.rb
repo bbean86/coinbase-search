@@ -5,6 +5,8 @@ class CreateSearches < ActiveRecord::Migration[6.0]
       t.string :search_type, null: false
       t.jsonb :result
       t.timestamp :expires_at, null: false
+      t.string :cursor
+      t.integer :limit
 
       t.timestamps
     end

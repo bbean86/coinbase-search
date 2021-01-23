@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 2021_01_23_134457) do
     t.string "search_type", null: false
     t.jsonb "result"
     t.datetime "expires_at", null: false
+    t.string "cursor"
+    t.integer "limit"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["query_params", "search_type"], name: "index_searches_on_query_params_and_search_type"

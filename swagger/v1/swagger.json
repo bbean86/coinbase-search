@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/currencies": {
+    "/api/v1/currencies": {
       "get": {
         "summary": "Searches for the currency on Coinbase Pro",
         "tags": [
@@ -15,6 +15,7 @@
           {
             "name": "name",
             "in": "query",
+            "description": "String containing a currency name or portion of name",
             "schema": {
               "type": "string"
             }
@@ -22,6 +23,7 @@
           {
             "name": "limit",
             "in": "query",
+            "description": "Integer indicating the maximum number of records the API should return",
             "schema": {
               "type": "integer"
             }
@@ -29,6 +31,7 @@
           {
             "name": "cursor",
             "in": "query",
+            "description": "String in Base64 containing the cursor for pagination to start from",
             "schema": {
               "type": "string"
             }
@@ -84,7 +87,7 @@
   },
   "servers": [
     {
-      "url": "http://{defaultHost}/api/v1",
+      "url": "http://{defaultHost}",
       "variables": {
         "defaultHost": {
           "default": "localhost:3000"

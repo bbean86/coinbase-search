@@ -28,7 +28,12 @@ class ExecuteSearch
 
   def existing_search
     @existing_search ||= Rails.cache.fetch(cache_key) do
-      s = Search.by_type(search_type).by_query(query_params).by_limit_and_cursor(limit, cursor)
+      s = Search
+          .by_type(search_type)
+          .by_query(query_params)
+          .by_limit_and_cursor(limit, cursor)
+          .first
+
       return s unless s.present? && s.expires_at <= Time.now
 
       s.query_coinbase
