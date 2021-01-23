@@ -10,4 +10,17 @@ class Coinbase::Currency < ApplicationRecord
                   }
 
   validates :name, :symbol, presence: true
+
+  scope :paginated, lambda { |cursor|
+    return unless cursor.present?
+
+    direction, name = Base64.decode64(cursor).split('__')
+
+    operators = {
+      'after' => '>',
+      'before' => '<'
+    }
+
+    where("name #{operators[direction]} '#{name}'")
+  }
 end

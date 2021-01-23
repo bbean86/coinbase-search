@@ -16,16 +16,22 @@ class ExecuteSearch
   end
 
   def execute
-    if existing_search.nil?
-      search = Search.new(search_type: search_type, query_params: query_params, expires_at: expires_at)
-      populate_result(search)
-      search_result(search)
-    else
-      search_result(existing_search)
-    end
+    return search_result(existing_search) if existing_search.present?
+
+    search = new_search
+    populate_result(search)
+    search_result(search)
   end
 
   private
+
+  def new_search
+    Search.new search_type: search_type,
+               query_params: query_params,
+               expires_at: expires_at,
+               limit: limit,
+               cursor: cursor
+  end
 
   def search_result(search)
     Rails.cache.fetch(cache_key) do
@@ -107,7 +113,7 @@ class ExecuteSearch
   end
 
   def populate_currencies_result(search)
-    search.result = currencies_by_name.limit(limit).to_a.map do |c|
+    search.result = currencies_by_name.limit(limit).paginated(cursor).to_a.map do |c|
       c.as_json(only: %i[name symbol])
     end
     search.save
@@ -122,9 +128,9 @@ class ExecuteSearch
 
   def currencies_by_name
     @currencies_by_name ||= if query_params['name'].present?
-                              Coinbase::Currency.search_by_name(query_params['name'])
+                              Coinbase::Currency.order(:name).search_by_name(query_params['name'])
                             else
-                              Coinbase::Currency.all
+                              Coinbase::Currency.all.order(:name)
                             end
   end
 
