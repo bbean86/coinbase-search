@@ -23,13 +23,15 @@ class ExecuteSearch
       return nil unless search.result.present?
 
       {
-        data: search.result
+        data: search.result,
+        cursor: calculate_cursor(search)
       }
     else
       return nil unless existing_search.result.present?
 
       {
-        data: existing_search.result
+        data: existing_search.result,
+        cursor: calculate_cursor(existing_search)
       }
     end
   end
@@ -102,7 +104,28 @@ class ExecuteSearch
   end
 
   def populate_currency_result(search)
-    search.result = Coinbase::Currency.search_by_name(query_params['name']).limit(limit).map(&:as_json)
+    search.result = Coinbase::Currency.search_by_name(query_params['name']).limit(limit).map do |c|
+      c.as_json(only: %i[name symbol])
+    end
     search.save
+  end
+
+  def calculate_cursor(search)
+    case search.search_type
+    when Search::SEARCH_TYPES[:currencies]
+      currencies_cursor(search)
+    end
+  end
+
+  def currencies_cursor(search)
+    previous_name = search.result.any? && search.result.first['name'] == Coinbase::Currency.first&.name ? nil : search.result.first['name']
+    next_name = search.result.any? && search.result.last['name']
+
+    return {} unless next_name
+
+    {
+      previous_page: previous_name && Base64.encode64("before__#{previous_name}"),
+      next_page: Base64.encode64("after__#{next_name}")
+    }
   end
 end
