@@ -15,6 +15,20 @@ class CoinbaseClient
     end
   end
 
+  def currency(symbol)
+    # takes advantage of HTTP response caching to avoid rate limit
+    response = conn.get('/currencies')
+
+    return nil unless response.body.present?
+
+    result = JSON.parse(response.body).find({}) { |c| c['id'] == symbol }
+
+    {
+      name: result['name'],
+      symbol: result['id']
+    }
+  end
+
   def pairs
     response = conn.get('/products')
 

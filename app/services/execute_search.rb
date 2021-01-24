@@ -110,10 +110,20 @@ class ExecuteSearch
     end
 
     pairs_to_persist.each do |p|
-      p[:base_currency] = Coinbase::Currency.find_by symbol: p[:base_currency]
-      p[:quote_currency] = Coinbase::Currency.find_by symbol: p[:quote_currency]
-      Coinbase::Pair.create(p)
+      p[:base_currency] = find_or_create_currency(p[:base_currency])
+      p[:quote_currency] = find_or_create_currency(p[:quote_currency])
+      Coinbase::Pair.create p
     end
+  end
+
+  def find_or_create_currency(symbol)
+    currency = Coinbase::Currency.find_by symbol: symbol
+    return currency if currency.present?
+
+    currency_response = coinbase_client.currency(symbol)
+    return unless currency_response.present?
+
+    Coinbase::Currency.create currency_response
   end
 
   def populate_pairs_result(search)
@@ -217,13 +227,6 @@ class ExecuteSearch
   end
 
   def cursor_hash(previous, subsequent)
-    unless subsequent || previous
-      return {
-        previous_page: nil,
-        next_page: nil
-      }
-    end
-
     {
       previous_page: previous && Base64.encode64("before__#{previous}"),
       next_page: subsequent && Base64.encode64("after__#{subsequent}")
