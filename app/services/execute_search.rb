@@ -17,11 +17,11 @@ class ExecuteSearch
   end
 
   def execute
-    return search_result(existing_search) if existing_search.present?
+    return search_result_hash(existing_search) if existing_search.present?
 
     search = new_search
     populate_result(search)
-    search_result(search)
+    search_result_hash(search)
   end
 
   private
@@ -34,7 +34,7 @@ class ExecuteSearch
                cursor: cursor
   end
 
-  def search_result(search)
+  def search_result_hash(search)
     Rails.cache.fetch(cache_key(search)) do
       return nil unless search.result.present?
 
@@ -47,7 +47,7 @@ class ExecuteSearch
 
   def conn(adapter, stubs)
     Faraday.new(connection_opts) do |builder|
-      builder.use :http_cache, store: Rails.cache, logger: ActiveSupport::Logger.new(STDOUT), serializer: Marshal
+      builder.use :http_cache, store: Rails.cache, logger: Rails.logger, serializer: Marshal
 
       if adapter == :test
         builder.adapter(:test, stubs)
