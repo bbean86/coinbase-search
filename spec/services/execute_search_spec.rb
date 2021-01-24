@@ -405,6 +405,20 @@ describe ExecuteSearch do
       end
     end
 
+    context 'pagination' do
+      it 'works for cursors that are URI encoded' do
+        result = ExecuteSearch.call({ search_type: :currencies, cursor: CGI.escape(Base64.encode64('before__Bitcoin')) }, :test, stubs)
+
+        expect(result[:data]).to eq([{ 'name' => 'Aave', 'symbol' => 'AAVE' }])
+      end
+
+      it 'works for cursors that are not URI encoded' do
+        result = ExecuteSearch.call({ search_type: :currencies, cursor: Base64.encode64('before__Bitcoin') }, :test, stubs)
+
+        expect(result[:data]).to eq([{ 'name' => 'Aave', 'symbol' => 'AAVE' }])
+      end
+    end
+
     context 'sorting pairs' do
       context 'by symbols DESC' do
         it 'returns the Pairs in the correct order' do

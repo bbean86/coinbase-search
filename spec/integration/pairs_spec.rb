@@ -6,15 +6,45 @@ describe 'Pairs API' do
       tags 'Pairs'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :symbols, in: :query, type: :string, description: 'contains symbols or a portion of symbols for desired pair to filter by'
-      parameter name: :base_currency, in: :query, type: :string, description: 'contains the name or a portion of the name of a currency to filter on base currency'
-      parameter name: :quote_currency, in: :query, type: :string, description: 'contains the name or a portion of the name of a currency to filter on quote currency'
-      parameter name: :limit, in: :query, type: :integer, description: 'indicates the maximum number of records the API should return'
-      parameter name: :cursor, in: :query, type: :string, description: 'contains the cursor for pagination to start from, in Base64'
-      parameter name: :sort, in: :query, type: :string, description: 'indicates the property and direction to sort the results on'
+      parameter name: :symbols,
+                in: :query,
+                type: :string,
+                description: 'contains symbols or a portion of symbols for desired pair to filter by',
+                example: 'b'
+
+      parameter name: :base_currency,
+                in: :query,
+                type: :string,
+                description: 'contains the name or a portion of the name of a currency to filter on base currency',
+                example: 'b'
+
+      parameter name: :quote_currency,
+                in: :query,
+                type: :string,
+                description: 'contains the name or a portion of the name of a currency to filter on quote currency',
+                example: 'u'
+
+      parameter name: :limit,
+                in: :query,
+                type: :integer,
+                description: 'indicates the maximum number of records the API should return',
+                example: 10
+
+      parameter name: :cursor,
+                in: :query,
+                type: :string,
+                description: 'contains the cursor for pagination to start from, in Base64',
+                example: CGI.escape(Base64.encode64('before__BTC-USD'))
+
+      parameter name: :sort,
+                in: :query,
+                type: :string,
+                description: 'indicates the property and direction to sort the results on',
+                example: 'symbols DESC',
+                enum: Coinbase::Pair.allowed_sort_columns
 
       let(:limit) { 10 }
-      let(:cursor) { Base64.encode64('before__Bitcoin') }
+      let(:cursor) { Base64.encode64('before__BTC-USD') }
       let(:sort) { 'symbols DESC' }
       let(:base_currency) { nil }
       let(:quote_currency) { nil }

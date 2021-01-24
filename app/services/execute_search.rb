@@ -11,7 +11,7 @@ class ExecuteSearch
     params = params.with_indifferent_access
     @search_type = params.delete(:search_type).to_s
     @limit = params.delete(:limit) || 50
-    @cursor = params.delete :cursor
+    @cursor = params[:cursor] && CGI.unescape(params.delete(:cursor))
     @expires_at = params.delete :expires_at
     @sort = params.delete :sort
     validate_sort
@@ -156,21 +156,15 @@ class ExecuteSearch
     return @pairs if @pairs
 
     query = Coinbase::Pair.includes(:base_currency, :quote_currency).order(pairs_sort || :symbols)
+    query = query.search_by_symbols(query_params[:symbols]) if query_params[:symbols].present?
+    query = query.search_by_base_currency(query_params[:base_currency]) if query_params[:base_currency].present?
+    query = query.search_by_quote_currency(query_params[:quote_currency]) if query_params[:quote_currency].present?
 
-    @pairs =
-      if query_params[:symbols].present?
-        query.search_by_symbols(query_params[:symbols])
-      elsif query_params[:base_currency].present?
-        query.search_by_base_currency(query_params[:base_currency])
-      elsif query_params[:quote_currency].present?
-        query.search_by_quote_currency(query_params[:quote_currency])
-      else
-        query
-      end
+    @pairs = query
   end
 
   def pairs_sort
-    return sort unless sort.include?('currency')
+    return sort unless sort&.include?('currency')
 
     column, direction = sort.split(' ')
     column_name = column == 'base_currency' ? 'coinbase_currencies.name' : "#{column.pluralize}_coinbase_pairs.name"
@@ -204,11 +198,13 @@ class ExecuteSearch
   end
 
   def currencies_by_name
-    @currencies_by_name ||= if query_params[:name].present?
-                              Coinbase::Currency.order(sort || :name).search_by_name(query_params[:name])
-                            else
-                              Coinbase::Currency.order(sort || :name)
-                            end
+    return @currencies_by_name if @currencies_by_name
+
+    query = Coinbase::Currency.order(sort || :name)
+    query = query.search_by_name(query_params[:name]) if query_params[:name].present?
+    query = query.search_by_symbol(query_params[:symbol]) if query_params[:symbol].present?
+
+    @currencies_by_name = query
   end
 
   def currencies_cursor(search)

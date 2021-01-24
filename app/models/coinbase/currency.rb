@@ -9,6 +9,12 @@ class Coinbase::Currency < ApplicationRecord
                     dmetaphone: {}
                   }
 
+  pg_search_scope :search_by_symbol,
+                  against: :symbol,
+                  using: {
+                    tsearch: { prefix: true }
+                  }
+
   validates :name, :symbol, presence: true
 
   has_many :pairs, dependent: :destroy

@@ -15,7 +15,17 @@
           {
             "name": "name",
             "in": "query",
-            "description": "contains a currency name or portion of name",
+            "description": "contains a currency name or portion of name to filter on",
+            "example": "b",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": "contains a symbol or portion of a symbol to filter on",
+            "example": "b",
             "schema": {
               "type": "string"
             }
@@ -24,6 +34,10 @@
             "name": "limit",
             "in": "query",
             "description": "indicates the maximum number of records the API should return",
+            "default": 50,
+            "example": 10,
+            "minimum": 0,
+            "maximum": 500,
             "schema": {
               "type": "integer"
             }
@@ -32,6 +46,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
+            "example": "YWZ0ZXJfX0JpdGNvaW4%3D%0A",
             "schema": {
               "type": "string"
             }
@@ -40,6 +55,13 @@
             "name": "sort",
             "in": "query",
             "description": "indicates the property and direction to sort the results on",
+            "example": "name DESC",
+            "enum": [
+              "symbol DESC",
+              "symbol ASC",
+              "name DESC",
+              "name ASC"
+            ],
             "schema": {
               "type": "string"
             }
@@ -120,6 +142,7 @@
             "name": "symbols",
             "in": "query",
             "description": "contains symbols or a portion of symbols for desired pair to filter by",
+            "example": "b",
             "schema": {
               "type": "string"
             }
@@ -128,6 +151,7 @@
             "name": "base_currency",
             "in": "query",
             "description": "contains the name or a portion of the name of a currency to filter on base currency",
+            "example": "b",
             "schema": {
               "type": "string"
             }
@@ -136,6 +160,7 @@
             "name": "quote_currency",
             "in": "query",
             "description": "contains the name or a portion of the name of a currency to filter on quote currency",
+            "example": "u",
             "schema": {
               "type": "string"
             }
@@ -144,6 +169,7 @@
             "name": "limit",
             "in": "query",
             "description": "indicates the maximum number of records the API should return",
+            "example": 10,
             "schema": {
               "type": "integer"
             }
@@ -152,6 +178,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
+            "example": "YmVmb3JlX19CVEMtVVNE%0A",
             "schema": {
               "type": "string"
             }
@@ -160,6 +187,15 @@
             "name": "sort",
             "in": "query",
             "description": "indicates the property and direction to sort the results on",
+            "example": "symbols DESC",
+            "enum": [
+              "symbols ASC",
+              "symbols DESC",
+              "base_currency ASC",
+              "base_currency DESC",
+              "quote_currency ASC",
+              "quote_currency DESC"
+            ],
             "schema": {
               "type": "string"
             }
