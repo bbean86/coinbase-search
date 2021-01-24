@@ -1,22 +1,26 @@
 class ExecuteSearch
-  def self.call(params)
-    instance = new(params)
+  def self.call(params, adapter = :net_http, stubs = nil)
+    instance = new(params, adapter, stubs)
     instance.execute
   end
 
-  attr_reader :search_type, :limit, :cursor, :expires_at, :query_params, :coinbase_client
+  attr_reader :search_type, :limit, :cursor, :expires_at, :query_params, :coinbase_client, :sort, :errors
 
-  def initialize(params, adapter = :net_http, stubs = nil)
+  def initialize(params, adapter, stubs)
+    @errors = []
     params = params.with_indifferent_access
     @search_type = params.delete(:search_type).to_s
     @limit = params.delete(:limit) || 50
     @cursor = params.delete :cursor
     @expires_at = params.delete :expires_at
+    @sort = params.delete :sort
+    validate_sort
     @query_params = params
     @coinbase_client = CoinbaseClient.new conn(adapter, stubs)
   end
 
   def execute
+    return { errors: errors } if errors.any?
     return search_result_hash(existing_search) if existing_search.present?
 
     search = new_search
@@ -26,12 +30,24 @@ class ExecuteSearch
 
   private
 
+  def validate_sort
+    return if sort.nil?
+
+    case search_type
+    when Search::SEARCH_TYPES[:currencies]
+      errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Currency.allowed_sort_columns.include?(sort)
+    when Search::SEARCH_TYPES[:pairs]
+      errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Pair.allowed_sort_columns.include?(sort)
+    end
+  end
+
   def new_search
     Search.new search_type: search_type,
                query_params: query_params,
                expires_at: expires_at,
                limit: limit,
-               cursor: cursor
+               cursor: cursor,
+               sort: sort
   end
 
   def search_result_hash(search)
@@ -73,20 +89,25 @@ class ExecuteSearch
         .by_type(search_type)
         .by_query(query_params)
         .by_limit_and_cursor(limit, cursor)
+        .by_sort(sort)
         .first
 
-    return s unless s.present? && s.expires_at <= Time.now
+    @existing_search = s
+
+    return @existing_search unless @existing_search.present? && @existing_search.expires_at <= Time.now
 
     populate_result(s)
-    @existing_search = s
+    @existing_search
   end
 
   def cache_key(search)
-    params = query_params.each_with_object([]) do |p, acc|
-      acc.push("#{p[0]}:#{p[1]}")
+    params = query_params.each_with_object([]) do |kvp, acc|
+      acc.push(kvp.join(':'))
     end.join('-')
 
-    "#{search_type}/" + Digest::SHA1.hexdigest("#{search_type}-#{params}-#{limit}-#{cursor}-#{search.expires_at}")
+    key = Digest::SHA1.hexdigest([search_type, params, sort, limit, cursor, search.expires_at].join(';'))
+
+    [search_type, key].join('/')
   end
 
   def populate_result(search)
@@ -134,7 +155,7 @@ class ExecuteSearch
   def pairs
     return @pairs if @pairs
 
-    query = Coinbase::Pair.includes(:base_currency, :quote_currency).order(:symbols)
+    query = Coinbase::Pair.includes(:base_currency, :quote_currency).order(pairs_sort || :symbols)
 
     @pairs =
       if query_params[:symbols].present?
@@ -146,6 +167,14 @@ class ExecuteSearch
       else
         query
       end
+  end
+
+  def pairs_sort
+    return sort unless sort.include?('currency')
+
+    column, direction = sort.split(' ')
+    column_name = column == 'base_currency' ? 'coinbase_currencies.name' : "#{column.pluralize}_coinbase_pairs.name"
+    [[column_name, direction].join(' '), ['symbols', direction].join(' ')]
   end
 
   def populate_currencies
@@ -176,9 +205,9 @@ class ExecuteSearch
 
   def currencies_by_name
     @currencies_by_name ||= if query_params[:name].present?
-                              Coinbase::Currency.order(:name).search_by_name(query_params[:name])
+                              Coinbase::Currency.order(sort || :name).search_by_name(query_params[:name])
                             else
-                              Coinbase::Currency.order(:name)
+                              Coinbase::Currency.order(sort || :name)
                             end
   end
 
@@ -228,8 +257,8 @@ class ExecuteSearch
 
   def cursor_hash(previous, subsequent)
     {
-      previous_page: previous && Base64.encode64("before__#{previous}"),
-      next_page: subsequent && Base64.encode64("after__#{subsequent}")
+      previous_page: previous && Base64.encode64("#{sort&.include?('DESC') ? 'after' : 'before'}__#{previous}"),
+      next_page: subsequent && Base64.encode64("#{sort&.include?('DESC') ? 'before' : 'after'}__#{subsequent}")
     }
   end
 end

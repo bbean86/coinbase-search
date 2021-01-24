@@ -148,6 +148,7 @@ CREATE TABLE public.searches (
     result jsonb,
     expires_at timestamp without time zone NOT NULL,
     cursor character varying,
+    sort character varying,
     "limit" integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -238,7 +239,7 @@ ALTER TABLE ONLY public.searches
 -- Name: idx_searches_on_multiple_columns; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_searches_on_multiple_columns ON public.searches USING btree (query_params, search_type, cursor, "limit");
+CREATE UNIQUE INDEX idx_searches_on_multiple_columns ON public.searches USING btree (query_params, search_type, cursor, "limit", sort);
 
 
 --

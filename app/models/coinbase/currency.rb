@@ -11,6 +11,8 @@ class Coinbase::Currency < ApplicationRecord
 
   validates :name, :symbol, presence: true
 
+  has_many :pairs, dependent: :destroy
+
   scope :paginated, lambda { |cursor|
     return unless cursor.present?
 
@@ -23,4 +25,8 @@ class Coinbase::Currency < ApplicationRecord
 
     where("name #{operators[direction]} '#{name}'")
   }
+
+  def self.allowed_sort_columns
+    ['symbol DESC', 'symbol ASC', 'name DESC', 'name ASC']
+  end
 end

@@ -9,9 +9,11 @@ describe 'Currencies API' do
       parameter name: :name, in: :query, type: :string, description: 'contains a currency name or portion of name'
       parameter name: :limit, in: :query, type: :integer, description: 'indicates the maximum number of records the API should return'
       parameter name: :cursor, in: :query, type: :string, description: 'contains the cursor for pagination to start from, in Base64'
+      parameter name: :sort, in: :query, type: :string, description: 'indicates the property and direction to sort the results on'
 
       let(:limit) { 10 }
       let(:cursor) { Base64.encode64('before__Bitcoin') }
+      let(:sort) { 'name DESC' }
 
       response '200', 'currencies found' do
         schema type: :object,
@@ -45,6 +47,13 @@ describe 'Currencies API' do
                  }
                }
         let(:name) { 'B' }
+
+        run_test!
+      end
+
+      response '422', 'malformed request' do
+        let(:name) { 'B' }
+        let(:sort) { 'foo ASC' }
 
         run_test!
       end

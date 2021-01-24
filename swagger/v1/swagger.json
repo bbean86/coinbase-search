@@ -35,6 +35,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "indicates the property and direction to sort the results on",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -88,6 +96,9 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "malformed request"
           },
           "404": {
             "description": "currencies not found"

@@ -44,4 +44,8 @@ class Coinbase::Pair < ApplicationRecord
 
     where("symbols #{operators[direction]} '#{name}'")
   }
+
+  def self.allowed_sort_columns
+    ['symbols ASC', 'symbols DESC', 'base_currency ASC', 'base_currency DESC', 'quote_currency ASC', 'quote_currency DESC']
+  end
 end

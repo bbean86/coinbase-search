@@ -21,7 +21,7 @@ class CoinbaseClient
 
     return nil unless response.body.present?
 
-    result = JSON.parse(response.body).find({}) { |c| c['id'] == symbol }
+    result = JSON.parse(response.body).find(-> { {} }) { |c| c['id'] == symbol }
 
     {
       name: result['name'],
