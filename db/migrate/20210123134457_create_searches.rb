@@ -11,6 +11,6 @@ class CreateSearches < ActiveRecord::Migration[6.0]
       t.timestamps
     end
 
-    add_index :searches, %i[query_params search_type cursor limit], name: :idx_searches_on_multiple_columns
+    add_index :searches, %i[query_params search_type cursor limit], name: :idx_searches_on_multiple_columns, unique: true
   end
 end

@@ -15,7 +15,7 @@
           {
             "name": "name",
             "in": "query",
-            "description": "String containing a currency name or portion of name",
+            "description": "contains a currency name or portion of name",
             "schema": {
               "type": "string"
             }
@@ -23,7 +23,7 @@
           {
             "name": "limit",
             "in": "query",
-            "description": "Integer indicating the maximum number of records the API should return",
+            "description": "indicates the maximum number of records the API should return",
             "schema": {
               "type": "integer"
             }
@@ -31,7 +31,7 @@
           {
             "name": "cursor",
             "in": "query",
-            "description": "String in Base64 containing the cursor for pagination to start from",
+            "description": "contains the cursor for pagination to start from, in Base64",
             "schema": {
               "type": "string"
             }
@@ -63,10 +63,24 @@
                       "type": "object",
                       "properties": {
                         "next_page": {
-                          "type": "string"
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "previous_page": {
-                          "type": "string"
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         }
                       }
                     }

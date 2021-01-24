@@ -14,10 +14,6 @@ describe 'Currencies API' do
       let(:cursor) { Base64.encode64('before__Bitcoin') }
 
       response '200', 'currencies found' do
-        after do |example|
-          example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) }
-        end
-
         schema type: :object,
                properties: {
                  data: {
@@ -33,8 +29,18 @@ describe 'Currencies API' do
                  cursor: {
                    type: :object,
                    properties: {
-                     next_page: { type: %i[string null] },
-                     previous_page: { type: %i[string null] }
+                     next_page: {
+                       oneOf: [
+                         { type: :string },
+                         { type: :null }
+                       ]
+                     },
+                     previous_page: {
+                       oneOf: [
+                         { type: :string },
+                         { type: :null }
+                       ]
+                     }
                    }
                  }
                }

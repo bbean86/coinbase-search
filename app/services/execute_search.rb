@@ -62,11 +62,7 @@ class ExecuteSearch
   def connection_opts
     {
       url: COINBASE_PRO_API_ROOT_URL,
-      headers: {
-        'Content-Type' => 'application/json',
-        'CB-ACCESS-KEY' => ENV['CB_ACCESS_KEY'],
-        'CB-ACCESS-PASSPHRASE' => ENV['CB_ACCESS_PASSPHRASE']
-      }
+      headers: { 'Content-Type' => 'application/json' }
     }
   end
 
@@ -90,7 +86,7 @@ class ExecuteSearch
       acc.push("#{p[0]}:#{p[1]}")
     end.join('-')
 
-    'currencies/' + Digest::SHA1.hexdigest("#{search_type}-#{params}-#{limit}-#{cursor}-#{search.expires_at}")
+    "#{search_type}/" + Digest::SHA1.hexdigest("#{search_type}-#{params}-#{limit}-#{cursor}-#{search.expires_at}")
   end
 
   def populate_result(search)
@@ -98,9 +94,50 @@ class ExecuteSearch
     when Search::SEARCH_TYPES[:currencies]
       populate_currencies
       populate_currencies_result(search)
+    when Search::SEARCH_TYPES[:pairs]
+      populate_pairs
+      populate_pairs_result(search)
     else
       raise "#{search.search_type} search not yet implemented"
     end
+  end
+
+  def populate_pairs
+    existing_pair_names = Coinbase::Pair.all.map(&:symbols)
+
+    pairs_to_persist = coinbase_client.pairs.reject do |c|
+      existing_pair_names.include?(c[:symbols])
+    end
+
+    pairs_to_persist.each do |p|
+      p[:base_currency] = Coinbase::Currency.find_by symbol: p[:base_currency]
+      p[:quote_currency] = Coinbase::Currency.find_by symbol: p[:quote_currency]
+      Coinbase::Pair.create(p)
+    end
+  end
+
+  def populate_pairs_result(search)
+    search.result = pairs.limit(limit).paginated(cursor).to_a.map do |c|
+      c.as_json(only: %i[symbols status]).merge(base_currency: c.base_currency.name, quote_currency: c.quote_currency.name)
+    end
+    search.save
+  end
+
+  def pairs
+    return @pairs if @pairs
+
+    query = Coinbase::Pair.includes(:base_currency, :quote_currency).order(:symbols)
+
+    @pairs =
+      if query_params[:symbols].present?
+        query.search_by_symbols(query_params[:symbols])
+      elsif query_params[:base_currency].present?
+        query.search_by_base_currency(query_params[:base_currency])
+      elsif query_params[:quote_currency].present?
+        query.search_by_quote_currency(query_params[:quote_currency])
+      else
+        query
+      end
   end
 
   def populate_currencies
@@ -126,12 +163,14 @@ class ExecuteSearch
     case search.search_type
     when Search::SEARCH_TYPES[:currencies]
       currencies_cursor(search)
+    when Search::SEARCH_TYPES[:pairs]
+      pairs_cursor(search)
     end
   end
 
   def currencies_by_name
-    @currencies_by_name ||= if query_params['name'].present?
-                              Coinbase::Currency.order(:name).search_by_name(query_params['name'])
+    @currencies_by_name ||= if query_params[:name].present?
+                              Coinbase::Currency.order(:name).search_by_name(query_params[:name])
                             else
                               Coinbase::Currency.order(:name)
                             end
@@ -143,12 +182,34 @@ class ExecuteSearch
     cursor_hash(previous_name, next_name)
   end
 
+  def pairs_cursor(search)
+    previous_symbols = first_search_result_symbols(search) == first_pair_symbols ? nil : first_search_result_symbols(search)
+    next_symbols = last_search_result_symbols(search) == last_pair_symbols ? nil : last_search_result_symbols(search)
+    cursor_hash(previous_symbols, next_symbols)
+  end
+
+  def first_search_result_symbols(search)
+    @first_search_result_symbols ||= search.result.any? && search.result.first['symbols']
+  end
+
+  def last_search_result_symbols(search)
+    @last_search_result_symbols ||= search.result.any? && search.result.last['symbols']
+  end
+
   def first_search_result_name(search)
     @first_search_result_name ||= search.result.any? && search.result.first['name']
   end
 
   def last_search_result_name(search)
     @last_search_result_name ||= search.result.any? && search.result.last['name']
+  end
+
+  def first_pair_symbols
+    pairs.first&.symbols
+  end
+
+  def last_pair_symbols
+    pairs.last&.symbols
   end
 
   def first_currency_name
@@ -159,8 +220,8 @@ class ExecuteSearch
     currencies_by_name.last&.name
   end
 
-  def cursor_hash(previous_name, next_name)
-    unless next_name
+  def cursor_hash(previous, subsequent)
+    unless subsequent || previous
       return {
         previous_page: nil,
         next_page: nil
@@ -168,8 +229,8 @@ class ExecuteSearch
     end
 
     {
-      previous_page: previous_name && Base64.encode64("before__#{previous_name}"),
-      next_page: Base64.encode64("after__#{next_name}")
+      previous_page: previous && Base64.encode64("before__#{previous}"),
+      next_page: subsequent && Base64.encode64("after__#{subsequent}")
     }
   end
 end

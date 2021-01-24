@@ -95,6 +95,40 @@ ALTER SEQUENCE public.coinbase_currencies_id_seq OWNED BY public.coinbase_curren
 
 
 --
+-- Name: coinbase_pairs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.coinbase_pairs (
+    id bigint NOT NULL,
+    symbols character varying NOT NULL,
+    base_currency_id bigint NOT NULL,
+    quote_currency_id bigint NOT NULL,
+    status character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: coinbase_pairs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.coinbase_pairs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: coinbase_pairs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.coinbase_pairs_id_seq OWNED BY public.coinbase_pairs.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -147,6 +181,13 @@ ALTER TABLE ONLY public.coinbase_currencies ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
+-- Name: coinbase_pairs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_pairs ALTER COLUMN id SET DEFAULT nextval('public.coinbase_pairs_id_seq'::regclass);
+
+
+--
 -- Name: searches id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -170,6 +211,14 @@ ALTER TABLE ONLY public.coinbase_currencies
 
 
 --
+-- Name: coinbase_pairs coinbase_pairs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_pairs
+    ADD CONSTRAINT coinbase_pairs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -189,7 +238,7 @@ ALTER TABLE ONLY public.searches
 -- Name: idx_searches_on_multiple_columns; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_searches_on_multiple_columns ON public.searches USING btree (query_params, search_type, cursor, "limit");
+CREATE UNIQUE INDEX idx_searches_on_multiple_columns ON public.searches USING btree (query_params, search_type, cursor, "limit");
 
 
 --
@@ -197,6 +246,36 @@ CREATE INDEX idx_searches_on_multiple_columns ON public.searches USING btree (qu
 --
 
 CREATE INDEX index_coinbase_currencies_on_name ON public.coinbase_currencies USING btree (name);
+
+
+--
+-- Name: index_coinbase_pairs_on_base_currency_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_coinbase_pairs_on_base_currency_id ON public.coinbase_pairs USING btree (base_currency_id);
+
+
+--
+-- Name: index_coinbase_pairs_on_quote_currency_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_coinbase_pairs_on_quote_currency_id ON public.coinbase_pairs USING btree (quote_currency_id);
+
+
+--
+-- Name: coinbase_pairs fk_rails_47856eb3e3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_pairs
+    ADD CONSTRAINT fk_rails_47856eb3e3 FOREIGN KEY (quote_currency_id) REFERENCES public.coinbase_currencies(id);
+
+
+--
+-- Name: coinbase_pairs fk_rails_b5b3a8ce9c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_pairs
+    ADD CONSTRAINT fk_rails_b5b3a8ce9c FOREIGN KEY (base_currency_id) REFERENCES public.coinbase_currencies(id);
 
 
 --
@@ -209,6 +288,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210123134457'),
 ('20210123182136'),
 ('20210123184318'),
-('20210123185328');
+('20210123185328'),
+('20210124005425');
 
 
