@@ -47,6 +47,8 @@ class ExecuteSearch
 
   def conn(adapter, stubs)
     Faraday.new(connection_opts) do |builder|
+      builder.use :http_cache, store: Rails.cache, logger: ActiveSupport::Logger.new(STDOUT), serializer: Marshal
+
       if adapter == :test
         builder.adapter(:test, stubs)
       else

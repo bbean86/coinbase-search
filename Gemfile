@@ -34,6 +34,7 @@ gem 'dotenv-rails'
 
 # HTTP Request wrapper
 gem 'faraday', '~> 1.3'
+gem 'faraday-http-cache'
 
 # Easy Search Scoping
 gem 'pg_search'
