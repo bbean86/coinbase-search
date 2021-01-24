@@ -7,7 +7,7 @@
   "paths": {
     "/api/v1/currencies": {
       "get": {
-        "summary": "Searches for the currency on Coinbase Pro",
+        "summary": "Returns matching currencies from Coinbase Pro",
         "tags": [
           "Currencies"
         ],
@@ -102,6 +102,132 @@
           },
           "404": {
             "description": "currencies not found"
+          },
+          "406": {
+            "description": "unsupported accept header"
+          }
+        }
+      }
+    },
+    "/api/v1/pairs": {
+      "get": {
+        "summary": "Returns matching pairs from Coinbase Pro",
+        "tags": [
+          "Pairs"
+        ],
+        "parameters": [
+          {
+            "name": "symbols",
+            "in": "query",
+            "description": "contains symbols or a portion of symbols for desired pair to filter by",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "base_currency",
+            "in": "query",
+            "description": "contains the name or a portion of the name of a currency to filter on base currency",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quote_currency",
+            "in": "query",
+            "description": "contains the name or a portion of the name of a currency to filter on quote currency",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "indicates the maximum number of records the API should return",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "contains the cursor for pagination to start from, in Base64",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "indicates the property and direction to sort the results on",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "pairs found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "symbols": {
+                            "type": "string"
+                          },
+                          "base_currency": {
+                            "type": "string"
+                          },
+                          "quote_currency": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "cursor": {
+                      "type": "object",
+                      "properties": {
+                        "next_page": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "previous_page": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "malformed request"
+          },
+          "404": {
+            "description": "pairs not found"
           },
           "406": {
             "description": "unsupported accept header"
