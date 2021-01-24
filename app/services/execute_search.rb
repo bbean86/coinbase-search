@@ -117,9 +117,7 @@ class ExecuteSearch
   end
 
   def populate_pairs_result(search)
-    search.result = pairs.limit(limit).paginated(cursor).to_a.map do |c|
-      c.as_json(only: %i[symbols status]).merge(base_currency: c.base_currency.name, quote_currency: c.quote_currency.name)
-    end
+    search.result = PairBlueprint.render_as_hash pairs.limit(limit).paginated(cursor)
     search.save
   end
 
@@ -153,9 +151,7 @@ class ExecuteSearch
   end
 
   def populate_currencies_result(search)
-    search.result = currencies_by_name.limit(limit).paginated(cursor).to_a.map do |c|
-      c.as_json(only: %i[name symbol])
-    end
+    search.result = CurrencyBlueprint.render_as_hash currencies_by_name.limit(limit).paginated(cursor)
     search.save
   end
 

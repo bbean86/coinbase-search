@@ -26,18 +26,21 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # gem 'rack-cors'
 
 # OpenAPI Documentation
-gem 'open_api-rswag-api'
-gem 'open_api-rswag-ui'
+gem 'open_api-rswag-api', '~> 0.1'
+gem 'open_api-rswag-ui', '~> 0.1'
 
 # Environment Variable management
-gem 'dotenv-rails'
+gem 'dotenv-rails', '~> 2.7'
 
 # HTTP Request wrapper
 gem 'faraday', '~> 1.3'
-gem 'faraday-http-cache'
+gem 'faraday-http-cache', '~> 2.2'
 
 # Easy Search Scoping
-gem 'pg_search'
+gem 'pg_search', '~> 2.3'
+
+# JSON Serialization
+gem 'blueprinter', '~> 0.25'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -55,7 +58,7 @@ end
 
 group :test do
   gem 'database_cleaner'
-  gem 'open_api-rswag-specs'
+  gem 'open_api-rswag-specs', '~> 0.1'
   gem 'shoulda-matchers', '~> 4.0'
   gem 'timecop'
 end
