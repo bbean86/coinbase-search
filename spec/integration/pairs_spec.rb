@@ -1,11 +1,15 @@
 require 'swagger_helper'
 
 describe 'Pairs API' do
+  let(:Authorization) { 'Bearer 73e2f213f7d875e9e62798b61d3c275ec63f2efe' }
+
   path '/api/v1/pairs' do
     get 'Returns matching pairs from Coinbase Pro' do
       tags 'Pairs'
       consumes 'application/json'
       produces 'application/json'
+      security [bearer: []]
+
       parameter name: :symbols,
                 in: :query,
                 type: :string,
@@ -48,6 +52,7 @@ describe 'Pairs API' do
       let(:sort) { 'symbols DESC' }
       let(:base_currency) { nil }
       let(:quote_currency) { nil }
+      let(:symbols) { 'BTC' }
 
       response '200', 'pairs found' do
         schema type: :object,
@@ -82,13 +87,11 @@ describe 'Pairs API' do
                    }
                  }
                }
-        let(:symbols) { 'BTC' }
 
         run_test!
       end
 
       response '422', 'malformed request' do
-        let(:symbols) { 'BTC' }
         let(:sort) { 'foo ASC' }
 
         run_test!
@@ -102,7 +105,12 @@ describe 'Pairs API' do
 
       response '406', 'unsupported accept header' do
         let(:Accept) { 'application/foo' }
-        let(:symbols) { 'BTC' }
+
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        let(:Authorization) { '' }
 
         run_test!
       end
@@ -114,6 +122,7 @@ describe 'Pairs API' do
       tags 'Pairs'
       consumes 'application/json'
       produces 'application/json'
+      security [bearer: []]
 
       parameter name: :symbols,
                 in: :path,
@@ -149,6 +158,7 @@ describe 'Pairs API' do
       let(:cursor) { Base64.encode64("before__#{Time.now.to_i}") }
       let(:sort) { 'time ASC' }
       let(:interval) { 60 }
+      let(:symbols) { 'BTC-USD' }
 
       response '200', 'rates found' do
         schema type: :object,
@@ -185,7 +195,30 @@ describe 'Pairs API' do
                    }
                  }
                }
-        let(:symbols) { 'BTC-USD' }
+
+        run_test!
+      end
+
+      response '404', 'pair not found' do
+        let(:symbols) { 'invalid' }
+
+        run_test!
+      end
+
+      response '406', 'unsupported accept header' do
+        let(:Accept) { 'application/foo' }
+
+        run_test!
+      end
+
+      response '422', 'malformed request' do
+        let(:sort) { 'foo ASC' }
+
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        let(:Authorization) { '' }
 
         run_test!
       end

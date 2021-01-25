@@ -6,6 +6,7 @@ describe 'Currencies API' do
       tags 'Currencies'
       consumes 'application/json'
       produces 'application/json'
+      security [bearer: []]
 
       parameter name: :name,
                 in: :query,
@@ -45,6 +46,8 @@ describe 'Currencies API' do
       let(:cursor) { Base64.encode64('before__Bitcoin') }
       let(:sort) { 'name DESC' }
       let(:symbol) { '' }
+      let(:Authorization) { 'Bearer 73e2f213f7d875e9e62798b61d3c275ec63f2efe' }
+      let(:name) { 'B' }
 
       response '200', 'currencies found' do
         schema type: :object,
@@ -77,13 +80,11 @@ describe 'Currencies API' do
                    }
                  }
                }
-        let(:name) { 'B' }
 
         run_test!
       end
 
       response '422', 'malformed request' do
-        let(:name) { 'B' }
         let(:sort) { 'foo ASC' }
 
         run_test!
@@ -97,7 +98,13 @@ describe 'Currencies API' do
 
       response '406', 'unsupported accept header' do
         let(:Accept) { 'application/foo' }
-        let(:name) { 'Bit' }
+
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        let(:Authorization) { '' }
+
         run_test!
       end
     end

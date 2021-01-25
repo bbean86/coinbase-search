@@ -67,7 +67,7 @@ class CoinbaseClient
       req.params['granularity'] = interval
     end
 
-    return [] unless response.body.present?
+    return [] unless response.status == 200
 
     JSON.parse(response.body).each_with_object([]) do |rate, acc|
       acc << {

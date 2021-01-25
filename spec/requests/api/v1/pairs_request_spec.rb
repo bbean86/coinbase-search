@@ -3,7 +3,7 @@ require 'shared_examples_for_searchable'
 
 RSpec.describe 'Api::V1::Pairs', type: :request do
   it 'returns a list of all pairs' do
-    get '/api/v1/pairs', { headers: { Accept: 'application/json' } }
+    get '/api/v1/pairs', { headers: { Accept: 'application/json', Authorization: 'Bearer 73e2f213f7d875e9e62798b61d3c275ec63f2efe' } }
 
     expect(response.status).to eql(200)
     expect(JSON.parse(response.body)).to eql(JSON.parse(file_fixture('pairs_api_response.json').read))

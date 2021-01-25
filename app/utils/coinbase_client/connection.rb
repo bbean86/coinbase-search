@@ -10,7 +10,7 @@ class CoinbaseClient
           builder.adapter(adapter)
         end
       end
-  end
+    end
 
     COINBASE_PRO_API_ROOT_URL = 'https://api.pro.coinbase.com'.freeze
 

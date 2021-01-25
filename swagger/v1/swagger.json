@@ -11,6 +11,13 @@
         "tags": [
           "Currencies"
         ],
+        "security": [
+          {
+            "bearer": [
+
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "name",
@@ -127,6 +134,9 @@
           },
           "406": {
             "description": "unsupported accept header"
+          },
+          "401": {
+            "description": "unauthorized"
           }
         }
       }
@@ -136,6 +146,13 @@
         "summary": "Returns matching pairs from Coinbase Pro",
         "tags": [
           "Pairs"
+        ],
+        "security": [
+          {
+            "bearer": [
+
+            ]
+          }
         ],
         "parameters": [
           {
@@ -267,6 +284,9 @@
           },
           "406": {
             "description": "unsupported accept header"
+          },
+          "401": {
+            "description": "unauthorized"
           }
         }
       }
@@ -276,6 +296,13 @@
         "summary": "Returns historical rates in candlestick form for pair from Coinbase Pro",
         "tags": [
           "Pairs"
+        ],
+        "security": [
+          {
+            "bearer": [
+
+            ]
+          }
         ],
         "parameters": [
           {
@@ -300,7 +327,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
-            "example": "YmVmb3JlX18xNjExNTI5Mzk1%0A",
+            "example": "YmVmb3JlX18xNjExNjE5Nzcy%0A",
             "schema": {
               "type": "string"
             }
@@ -350,19 +377,19 @@
                             "format": "date-time"
                           },
                           "low": {
-                            "type": "number"
+                            "type": "string"
                           },
                           "high": {
-                            "type": "number"
+                            "type": "string"
                           },
                           "open": {
-                            "type": "number"
+                            "type": "string"
                           },
                           "close": {
-                            "type": "number"
+                            "type": "string"
                           },
                           "volume": {
-                            "type": "number"
+                            "type": "string"
                           }
                         }
                       }
@@ -396,6 +423,18 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "pair not found"
+          },
+          "406": {
+            "description": "unsupported accept header"
+          },
+          "422": {
+            "description": "malformed request"
+          },
+          "401": {
+            "description": "unauthorized"
           }
         }
       }
@@ -410,5 +449,13 @@
         }
       }
     }
-  ]
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
 }
