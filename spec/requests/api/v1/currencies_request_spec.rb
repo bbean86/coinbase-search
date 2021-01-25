@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'shared_examples_for_searchable'
 
 RSpec.describe 'Api::V1::Currencies', type: :request do
   describe 'GET /api/v1/currencies' do
@@ -9,11 +10,6 @@ RSpec.describe 'Api::V1::Currencies', type: :request do
       expect(JSON.parse(response.body)).to eql(JSON.parse(file_fixture('currencies_api_response.json').read))
     end
 
-    it 'handles an invalid limit parameter' do
-      get '/api/v1/currencies', { headers: { Accept: 'application/json' }, params: { limit: -1 } }
-
-      expect(response.status).to eql(422)
-      expect(JSON.parse(response.body)).to eql({ 'message' => 'Limit must be greater than 0' })
-    end
+    it_behaves_like 'a searchable index', '/api/v1/currencies'
   end
 end

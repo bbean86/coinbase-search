@@ -21,13 +21,23 @@ class Search < ApplicationRecord
     rates: 'rates'
   }.freeze
 
+  private
+
   def cursor_is_base64?
+    errors.add(:cursor, 'must be Base64 encoded') unless base64_cursor?
+  end
+
+  def base64_cursor?
     cursor.is_a?(String) && Base64.strict_encode64(Base64.decode64(cursor)) == cursor
   end
 
   def cursor_prefix_valid?
+    return unless base64_cursor?
+
     c = Base64.decode64(cursor)
-    c.start_with?('before__') || c.start_with?('after__')
+    return if c.start_with?('before__') || c.start_with?('after__')
+
+    errors.add(:cursor, 'must start with `before__` or `after__` when decoded')
   end
 
   def validate_currencies_sort?

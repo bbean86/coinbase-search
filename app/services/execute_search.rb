@@ -237,6 +237,16 @@ class ExecuteSearch
     search.save
   end
 
+  def currencies_by_name
+    return @currencies_by_name if @currencies_by_name
+
+    query = Coinbase::Currency.order(sort || :name)
+    query = query.search_by_name(query_params[:name]) if query_params[:name].present?
+    query = query.search_by_symbol(query_params[:symbol]) if query_params[:symbol].present?
+
+    @currencies_by_name = query
+  end
+
   def calculate_cursor(search)
     case search.search_type
     when Search::SEARCH_TYPES[:currencies]
@@ -246,16 +256,6 @@ class ExecuteSearch
     when Search::SEARCH_TYPES[:rates]
       rates_cursor(search)
     end
-  end
-
-  def currencies_by_name
-    return @currencies_by_name if @currencies_by_name
-
-    query = Coinbase::Currency.order(sort || :name)
-    query = query.search_by_name(query_params[:name]) if query_params[:name].present?
-    query = query.search_by_symbol(query_params[:symbol]) if query_params[:symbol].present?
-
-    @currencies_by_name = query
   end
 
   def currencies_cursor(search)
@@ -334,8 +334,8 @@ class ExecuteSearch
 
   def cursor_hash(previous, subsequent)
     {
-      previous_page: previous && Base64.encode64("#{sort&.include?('DESC') ? 'after' : 'before'}__#{previous}"),
-      next_page: subsequent && Base64.encode64("#{sort&.include?('DESC') ? 'before' : 'after'}__#{subsequent}")
+      previous_page: previous && Base64.strict_encode64("#{sort&.include?('DESC') ? 'after' : 'before'}__#{previous}"),
+      next_page: subsequent && Base64.strict_encode64("#{sort&.include?('DESC') ? 'before' : 'after'}__#{subsequent}")
     }
   end
 end

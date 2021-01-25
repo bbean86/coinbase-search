@@ -71,7 +71,7 @@ describe ExecuteSearch do
 
     context 'pagination' do
       context 'for URI encoded cursors' do
-        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: CGI.escape(Base64.encode64('before__Bitcoin')), expires_at: Time.now + 1.day }, :test, stubs) }
+        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: CGI.escape(Base64.strict_encode64('before__Bitcoin')), expires_at: Time.now + 1.day }, :test, stubs) }
 
         it 'works for cursors that are URI encoded' do
           expect(result[:data]).to eq([{ 'name' => 'Aave', 'symbol' => 'AAVE' }])
@@ -79,7 +79,7 @@ describe ExecuteSearch do
       end
 
       context 'for URI encoded cursors' do
-        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: Base64.encode64('before__Bitcoin'), expires_at: Time.now + 1.day }, :test, stubs) }
+        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: Base64.strict_encode64('before__Bitcoin'), expires_at: Time.now + 1.day }, :test, stubs) }
 
         it 'works for cursors that are not URI encoded' do
           expect(result[:data]).to eq([{ 'name' => 'Aave', 'symbol' => 'AAVE' }])
