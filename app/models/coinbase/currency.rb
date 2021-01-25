@@ -1,5 +1,6 @@
 class Coinbase::Currency < ApplicationRecord
   include PgSearch::Model
+  include CursorPagination
 
   pg_search_scope :search_by_name,
                   against: :name,
@@ -17,20 +18,9 @@ class Coinbase::Currency < ApplicationRecord
 
   validates :name, :symbol, presence: true
 
-  has_many :pairs, dependent: :destroy
+  has_many :pairs, dependent: :destroy, class_name: 'Coinbase::Pair'
 
-  scope :paginated, lambda { |cursor|
-    return unless cursor.present?
-
-    direction, name = Base64.decode64(cursor).split('__')
-
-    operators = {
-      'after' => '>',
-      'before' => '<'
-    }
-
-    where("name #{operators[direction]} '#{name}'")
-  }
+  paginate_on :name
 
   def self.allowed_sort_columns
     ['symbol DESC', 'symbol ASC', 'name DESC', 'name ASC']

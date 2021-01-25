@@ -4,45 +4,32 @@ class ExecuteSearch
     instance.execute
   end
 
-  attr_reader :search_type, :limit, :cursor, :expires_at, :query_params, :coinbase_client, :sort, :errors
+  attr_reader :search_type, :limit, :cursor, :expires_at, :query_params, :coinbase_client, :sort
 
   def initialize(params, adapter, stubs)
-    @errors = []
     params = params.with_indifferent_access
     @search_type = params.delete(:search_type).to_s
     @limit = params.delete(:limit) || 50
     @cursor = params[:cursor] && CGI.unescape(params.delete(:cursor))
     @expires_at = params.delete :expires_at
     @sort = params.delete :sort
-    validate_sort
     @query_params = params
     @coinbase_client = CoinbaseClient.new conn(adapter, stubs)
     query_params[:interval] = query_params[:interval]&.to_i
   end
 
   def execute
-    return { errors: errors } if errors.any?
     return search_result_hash(existing_search) if existing_search.present?
 
     search = new_search
+
+    return { errors: search.errors } unless search.valid?
+
     populate_result(search)
     search_result_hash(search)
   end
 
   private
-
-  def validate_sort
-    return if sort.nil?
-
-    case search_type
-    when Search::SEARCH_TYPES[:currencies]
-      errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Currency.allowed_sort_columns.include?(sort)
-    when Search::SEARCH_TYPES[:pairs]
-      errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Pair.allowed_sort_columns.include?(sort)
-    when Search::SEARCH_TYPES[:rates]
-      errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Rate.allowed_sort_columns.include?(sort)
-    end
-  end
 
   def new_search
     Search.new search_type: search_type,

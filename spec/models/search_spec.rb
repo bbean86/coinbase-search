@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Search, type: :model do
-  let!(:search) { Search.create(search_type: 'currencies', query_params: { name: 'Bit' }, expires_at: Time.now + 1.day) }
-  let!(:search_2) { Search.create(search_type: 'currencies', query_params: { name: 'Eth' }, expires_at: Time.now + 1.day, limit: 10, cursor: 'after__Bitcoin') }
-  let!(:search_3) { Search.create(search_type: 'currencies', query_params: { name: 'Doge' }, expires_at: Time.now + 1.day) }
+  let!(:search) { Search.create!(search_type: 'currencies', query_params: { name: 'Bit' }, expires_at: Time.now + 1.day) }
+  let!(:search_2) { Search.create!(search_type: 'currencies', query_params: { name: 'Eth' }, expires_at: Time.now + 1.day, limit: 10, cursor: 'after__Bitcoin') }
+  let!(:search_3) { Search.create!(search_type: 'currencies', query_params: { name: 'Doge' }, expires_at: Time.now + 1.day) }
 
   it { is_expected.to validate_presence_of(:search_type) }
   it { is_expected.to validate_presence_of(:expires_at) }

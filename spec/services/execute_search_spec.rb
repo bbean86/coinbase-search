@@ -44,14 +44,14 @@ describe ExecuteSearch do
                     result: [{ name: 'Bitcon', symbol: 'BTC' }],
                     expires_at: Time.now + 1.hour
     end
-    let(:result) { ExecuteSearch.call({ search_type: :currencies, name: 'Bit' }, :test, stubs) }
+    let(:result) { ExecuteSearch.call({ search_type: :currencies, name: 'Bit', expires_at: Time.now + 1.day }, :test, stubs) }
 
     it 'finds an existing Search by the given search_type and query params' do
       expect(result[:data]).to_not be_empty
     end
 
     context 'sorting currencies by name DESC' do
-      let(:result) { ExecuteSearch.call({ search_type: :currencies, name: 'Bit', sort: 'name DESC' }, :test, stubs) }
+      let(:result) { ExecuteSearch.call({ search_type: :currencies, name: 'Bit', sort: 'name DESC', expires_at: Time.now + 1.day }, :test, stubs) }
 
       it 'returns the Currencies in the correct order' do
         expect(result[:data]).to eq([
@@ -71,7 +71,7 @@ describe ExecuteSearch do
 
     context 'pagination' do
       context 'for URI encoded cursors' do
-        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: CGI.escape(Base64.encode64('before__Bitcoin')) }, :test, stubs) }
+        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: CGI.escape(Base64.encode64('before__Bitcoin')), expires_at: Time.now + 1.day }, :test, stubs) }
 
         it 'works for cursors that are URI encoded' do
           expect(result[:data]).to eq([{ 'name' => 'Aave', 'symbol' => 'AAVE' }])
@@ -79,7 +79,7 @@ describe ExecuteSearch do
       end
 
       context 'for URI encoded cursors' do
-        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: Base64.encode64('before__Bitcoin') }, :test, stubs) }
+        let(:result) { ExecuteSearch.call({ search_type: :currencies, cursor: Base64.encode64('before__Bitcoin'), expires_at: Time.now + 1.day }, :test, stubs) }
 
         it 'works for cursors that are not URI encoded' do
           expect(result[:data]).to eq([{ 'name' => 'Aave', 'symbol' => 'AAVE' }])
@@ -89,7 +89,7 @@ describe ExecuteSearch do
 
     context 'sorting pairs' do
       context 'by symbols DESC' do
-        let(:result) { ExecuteSearch.call({ search_type: :pairs, symbols: 'AAVE', sort: 'symbols DESC', limit: 3 }, :test, stubs) }
+        let(:result) { ExecuteSearch.call({ search_type: :pairs, symbols: 'AAVE', sort: 'symbols DESC', limit: 3, expires_at: Time.now + 1.day }, :test, stubs) }
 
         it 'returns the Pairs in the correct order' do
           expect(result[:data]).to eq([{ 'base_currency' => 'Aave',
@@ -109,7 +109,7 @@ describe ExecuteSearch do
     end
 
     context 'getting rates' do
-      let(:result) { ExecuteSearch.call({ search_type: :rates, symbols: 'BTC-USD', sort: 'time DESC', limit: 3 }, :test, stubs) }
+      let(:result) { ExecuteSearch.call({ search_type: :rates, symbols: 'BTC-USD', sort: 'time DESC', limit: 3, expires_at: Time.now + 1.day }, :test, stubs) }
 
       it 'returns a list of rates' do
         expect(result[:data]).to eq([{ 'close' => '31959.45',

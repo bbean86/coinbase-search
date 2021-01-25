@@ -1,5 +1,6 @@
 class Coinbase::Pair < ApplicationRecord
   include PgSearch::Model
+  include CursorPagination
 
   validates :base_currency, :quote_currency, :symbols, :status, presence: true
 
@@ -32,18 +33,9 @@ class Coinbase::Pair < ApplicationRecord
   belongs_to :base_currency, class_name: 'Coinbase::Currency'
   belongs_to :quote_currency, class_name: 'Coinbase::Currency'
 
-  scope :paginated, lambda { |cursor|
-    return unless cursor.present?
+  has_many :rates, class_name: 'Coinbase::Rate'
 
-    direction, name = Base64.decode64(cursor).split('__')
-
-    operators = {
-      'after' => '>',
-      'before' => '<'
-    }
-
-    where("symbols #{operators[direction]} '#{name}'")
-  }
+  paginate_on :symbols
 
   def self.allowed_sort_columns
     ['symbols ASC', 'symbols DESC', 'base_currency ASC', 'base_currency DESC', 'quote_currency ASC', 'quote_currency DESC']
