@@ -43,4 +43,12 @@ RSpec.describe Coinbase::Pair, type: :model do
       expect(united_search).to eq([btc_usd, eth_usd])
     end
   end
+
+  describe '.paginated' do
+    let(:result) { Coinbase::Pair.paginated(Base64.encode64('after__BTC-USD')) }
+
+    it 'returns Pairs indicated by the cursor' do
+      expect(result).to eq([eth_usd])
+    end
+  end
 end

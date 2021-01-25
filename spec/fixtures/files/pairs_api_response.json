@@ -1,0 +1,308 @@
+{
+  "data": [
+    {
+      "symbols": "AAVE-BTC",
+      "status": "online",
+      "base_currency": "Aave",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "AAVE-EUR",
+      "status": "online",
+      "base_currency": "Aave",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "AAVE-GBP",
+      "status": "online",
+      "base_currency": "Aave",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "AAVE-USD",
+      "status": "online",
+      "base_currency": "Aave",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "ALGO-BTC",
+      "status": "online",
+      "base_currency": "Algorand",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "ALGO-EUR",
+      "status": "online",
+      "base_currency": "Algorand",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "ALGO-GBP",
+      "status": "online",
+      "base_currency": "Algorand",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "ALGO-USD",
+      "status": "online",
+      "base_currency": "Algorand",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "ATOM-BTC",
+      "status": "online",
+      "base_currency": "Cosmos",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "ATOM-USD",
+      "status": "online",
+      "base_currency": "Cosmos",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "BAL-BTC",
+      "status": "online",
+      "base_currency": "Balancer",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "BAL-USD",
+      "status": "online",
+      "base_currency": "Balancer",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "BAND-BTC",
+      "status": "online",
+      "base_currency": "Band Protocol",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "BAND-EUR",
+      "status": "online",
+      "base_currency": "Band Protocol",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "BAND-GBP",
+      "status": "online",
+      "base_currency": "Band Protocol",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "BAND-USD",
+      "status": "online",
+      "base_currency": "Band Protocol",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "BAT-ETH",
+      "status": "online",
+      "base_currency": "Basic Attention Token",
+      "quote_currency": "Ether"
+    },
+    {
+      "symbols": "BAT-USDC",
+      "status": "online",
+      "base_currency": "Basic Attention Token",
+      "quote_currency": "USD Coin"
+    },
+    {
+      "symbols": "BCH-BTC",
+      "status": "online",
+      "base_currency": "Bitcoin Cash",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "BCH-EUR",
+      "status": "online",
+      "base_currency": "Bitcoin Cash",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "BCH-GBP",
+      "status": "online",
+      "base_currency": "Bitcoin Cash",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "BCH-USD",
+      "status": "online",
+      "base_currency": "Bitcoin Cash",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "BNT-BTC",
+      "status": "online",
+      "base_currency": "Bancor",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "BNT-EUR",
+      "status": "online",
+      "base_currency": "Bancor",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "BNT-GBP",
+      "status": "online",
+      "base_currency": "Bancor",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "BNT-USD",
+      "status": "online",
+      "base_currency": "Bancor",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "BTC-EUR",
+      "status": "online",
+      "base_currency": "Bitcoin",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "BTC-GBP",
+      "status": "online",
+      "base_currency": "Bitcoin",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "BTC-USD",
+      "status": "online",
+      "base_currency": "Bitcoin",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "BTC-USDC",
+      "status": "online",
+      "base_currency": "Bitcoin",
+      "quote_currency": "USD Coin"
+    },
+    {
+      "symbols": "CGLD-BTC",
+      "status": "online",
+      "base_currency": "Celo",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "CGLD-EUR",
+      "status": "online",
+      "base_currency": "Celo",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "CGLD-GBP",
+      "status": "online",
+      "base_currency": "Celo",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "CGLD-USD",
+      "status": "online",
+      "base_currency": "Celo",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "COMP-BTC",
+      "status": "online",
+      "base_currency": "Compound",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "COMP-USD",
+      "status": "online",
+      "base_currency": "Compound",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "CVC-USDC",
+      "status": "online",
+      "base_currency": "Civic",
+      "quote_currency": "USD Coin"
+    },
+    {
+      "symbols": "DAI-USD",
+      "status": "online",
+      "base_currency": "Dai",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "DAI-USDC",
+      "status": "online",
+      "base_currency": "Dai",
+      "quote_currency": "USD Coin"
+    },
+    {
+      "symbols": "DASH-BTC",
+      "status": "online",
+      "base_currency": "Dash",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "DASH-USD",
+      "status": "online",
+      "base_currency": "Dash",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "DNT-USDC",
+      "status": "online",
+      "base_currency": "district0x",
+      "quote_currency": "USD Coin"
+    },
+    {
+      "symbols": "EOS-BTC",
+      "status": "online",
+      "base_currency": "EOS",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "EOS-EUR",
+      "status": "online",
+      "base_currency": "EOS",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "EOS-USD",
+      "status": "online",
+      "base_currency": "EOS",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "ETC-BTC",
+      "status": "online",
+      "base_currency": "Ether Classic",
+      "quote_currency": "Bitcoin"
+    },
+    {
+      "symbols": "ETC-EUR",
+      "status": "online",
+      "base_currency": "Ether Classic",
+      "quote_currency": "Euro"
+    },
+    {
+      "symbols": "ETC-GBP",
+      "status": "online",
+      "base_currency": "Ether Classic",
+      "quote_currency": "British Pound"
+    },
+    {
+      "symbols": "ETC-USD",
+      "status": "online",
+      "base_currency": "Ether Classic",
+      "quote_currency": "United States Dollar"
+    },
+    {
+      "symbols": "ETH-BTC",
+      "status": "online",
+      "base_currency": "Ether",
+      "quote_currency": "Bitcoin"
+    }
+  ],
+  "cursor": {
+    "previous_page": null,
+    "next_page": "YWZ0ZXJfX0VUSC1CVEM=\n"
+  }
+}

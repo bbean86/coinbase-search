@@ -1,0 +1,200 @@
+{
+  "cursor": {
+    "next_page": null,
+    "previous_page": null
+  },
+  "data": [
+    {
+      "name": "0x",
+      "symbol": "ZRX"
+    },
+    {
+      "name": "Aave",
+      "symbol": "AAVE"
+    },
+    {
+      "name": "Algorand",
+      "symbol": "ALGO"
+    },
+    {
+      "name": "Augur",
+      "symbol": "REP"
+    },
+    {
+      "name": "Balancer",
+      "symbol": "BAL"
+    },
+    {
+      "name": "Bancor",
+      "symbol": "BNT"
+    },
+    {
+      "name": "Band Protocol",
+      "symbol": "BAND"
+    },
+    {
+      "name": "Basic Attention Token",
+      "symbol": "BAT"
+    },
+    {
+      "name": "Bitcoin",
+      "symbol": "BTC"
+    },
+    {
+      "name": "Bitcoin Cash",
+      "symbol": "BCH"
+    },
+    {
+      "name": "British Pound",
+      "symbol": "GBP"
+    },
+    {
+      "name": "Celo",
+      "symbol": "CGLD"
+    },
+    {
+      "name": "Chainlink",
+      "symbol": "LINK"
+    },
+    {
+      "name": "Civic",
+      "symbol": "CVC"
+    },
+    {
+      "name": "Compound",
+      "symbol": "COMP"
+    },
+    {
+      "name": "Cosmos",
+      "symbol": "ATOM"
+    },
+    {
+      "name": "Dai",
+      "symbol": "DAI"
+    },
+    {
+      "name": "Dash",
+      "symbol": "DASH"
+    },
+    {
+      "name": "Decentraland",
+      "symbol": "MANA"
+    },
+    {
+      "name": "EOS",
+      "symbol": "EOS"
+    },
+    {
+      "name": "Ether",
+      "symbol": "ETH"
+    },
+    {
+      "name": "Ether Classic",
+      "symbol": "ETC"
+    },
+    {
+      "name": "Euro",
+      "symbol": "EUR"
+    },
+    {
+      "name": "Filecoin",
+      "symbol": "FIL"
+    },
+    {
+      "name": "Golem",
+      "symbol": "GNT"
+    },
+    {
+      "name": "Kyber Network",
+      "symbol": "KNC"
+    },
+    {
+      "name": "Litecoin",
+      "symbol": "LTC"
+    },
+    {
+      "name": "Loom Network",
+      "symbol": "LOOM"
+    },
+    {
+      "name": "Loopring",
+      "symbol": "LRC"
+    },
+    {
+      "name": "Maker",
+      "symbol": "MKR"
+    },
+    {
+      "name": "NuCypher",
+      "symbol": "NU"
+    },
+    {
+      "name": "Numeraire",
+      "symbol": "NMR"
+    },
+    {
+      "name": "OMG Network",
+      "symbol": "OMG"
+    },
+    {
+      "name": "Orchid",
+      "symbol": "OXT"
+    },
+    {
+      "name": "Ren",
+      "symbol": "REN"
+    },
+    {
+      "name": "Stellar",
+      "symbol": "XLM"
+    },
+    {
+      "name": "Synthetix",
+      "symbol": "SNX"
+    },
+    {
+      "name": "Tezos",
+      "symbol": "XTZ"
+    },
+    {
+      "name": "The Graph",
+      "symbol": "GRT"
+    },
+    {
+      "name": "UMA",
+      "symbol": "UMA"
+    },
+    {
+      "name": "USD Coin",
+      "symbol": "USDC"
+    },
+    {
+      "name": "Uniswap",
+      "symbol": "UNI"
+    },
+    {
+      "name": "United States Dollar",
+      "symbol": "USD"
+    },
+    {
+      "name": "Wrapped Bitcoin",
+      "symbol": "WBTC"
+    },
+    {
+      "name": "XRP",
+      "symbol": "XRP"
+    },
+    {
+      "name": "Zcash",
+      "symbol": "ZEC"
+    },
+    {
+      "name": "district0x",
+      "symbol": "DNT"
+    },
+    {
+      "name": "yearn.finance",
+      "symbol": "YFI"
+    }
+  ]
+}

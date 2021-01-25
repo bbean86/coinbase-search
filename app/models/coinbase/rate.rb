@@ -1,9 +1,7 @@
 class Coinbase::Rate < ApplicationRecord
-  include PgSearch::Model
-
   belongs_to :pair
 
-  scope :by_symbols, ->(symbols) { where(coinbase_pairs: { symbols: symbols }) }
+  scope :by_symbols, ->(symbols) { includes(:pair).where(coinbase_pairs: { symbols: symbols }) }
   scope :by_interval, ->(interval) { where(interval: interval) }
 
   scope :paginated, lambda { |cursor|
