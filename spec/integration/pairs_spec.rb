@@ -124,20 +124,19 @@ describe 'Pairs API' do
       parameter name: :limit,
                 in: :query,
                 type: :integer,
-                description: 'indicates the maximum number of records the API should return',
-                example: 10
+                description: 'indicates the maximum number of records the API should return'
 
       parameter name: :cursor,
                 in: :query,
                 type: :string,
                 description: 'contains the cursor for pagination to start from, in Base64',
-                example: CGI.escape(Base64.encode64('before__BTC-USD'))
+                example: CGI.escape(Base64.encode64("before__#{Time.now.to_i}"))
 
       parameter name: :sort,
                 in: :query,
                 type: :string,
                 description: 'indicates the property and direction to sort the results on',
-                example: 'time DESC'
+                example: 'time ASC'
 
       parameter name: :interval,
                 in: :query,
@@ -147,8 +146,8 @@ describe 'Pairs API' do
                 example: 60
 
       let(:limit) { 10 }
-      let(:cursor) { Base64.encode64("after__#{Time.now.to_i}") }
-      let(:sort) { 'time DESC' }
+      let(:cursor) { Base64.encode64("before__#{Time.now.to_i}") }
+      let(:sort) { 'time ASC' }
       let(:interval) { 60 }
 
       response '200', 'rates found' do
@@ -159,12 +158,12 @@ describe 'Pairs API' do
                    items: {
                      type: :object,
                      properties: {
-                       time: { type: :integer },
-                       low: { type: :decimal },
-                       high: { type: :decimal },
-                       open: { type: :decimal },
-                       close: { type: :decimal },
-                       volume: { type: :decimal }
+                       time: { type: :string, format: 'date-time' },
+                       low: { type: :string },
+                       high: { type: :string },
+                       open: { type: :string },
+                       close: { type: :string },
+                       volume: { type: :string }
                      }
                    }
                  },

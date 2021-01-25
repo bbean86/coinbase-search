@@ -270,6 +270,135 @@
           }
         }
       }
+    },
+    "/api/v1/pairs/{symbols}/rates": {
+      "get": {
+        "summary": "Returns historical rates in candlestick form for pair from Coinbase Pro",
+        "tags": [
+          "Pairs"
+        ],
+        "parameters": [
+          {
+            "name": "symbols",
+            "in": "path",
+            "description": "indicates the pair to get rates for by its symbols",
+            "example": "BTC-USD",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "indicates the maximum number of records the API should return",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "contains the cursor for pagination to start from, in Base64",
+            "example": "YmVmb3JlX18xNjExNTI5Mzk1%0A",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "indicates the property and direction to sort the results on",
+            "example": "time ASC",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "description": "contains an integer indicating rate interval in seconds to build candlesticks from",
+            "enum": [
+              60,
+              300,
+              900,
+              3600,
+              21600,
+              86400
+            ],
+            "example": 60,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rates found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "time": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "low": {
+                            "type": "number"
+                          },
+                          "high": {
+                            "type": "number"
+                          },
+                          "open": {
+                            "type": "number"
+                          },
+                          "close": {
+                            "type": "number"
+                          },
+                          "volume": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "cursor": {
+                      "type": "object",
+                      "properties": {
+                        "next_page": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "previous_page": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

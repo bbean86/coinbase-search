@@ -129,6 +129,44 @@ ALTER SEQUENCE public.coinbase_pairs_id_seq OWNED BY public.coinbase_pairs.id;
 
 
 --
+-- Name: coinbase_rates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.coinbase_rates (
+    id bigint NOT NULL,
+    pair_id bigint NOT NULL,
+    "time" timestamp without time zone,
+    low numeric,
+    high numeric,
+    open numeric,
+    close numeric,
+    volume numeric,
+    "interval" integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: coinbase_rates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.coinbase_rates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: coinbase_rates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.coinbase_rates_id_seq OWNED BY public.coinbase_rates.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -189,6 +227,13 @@ ALTER TABLE ONLY public.coinbase_pairs ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
+-- Name: coinbase_rates id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_rates ALTER COLUMN id SET DEFAULT nextval('public.coinbase_rates_id_seq'::regclass);
+
+
+--
 -- Name: searches id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -217,6 +262,14 @@ ALTER TABLE ONLY public.coinbase_currencies
 
 ALTER TABLE ONLY public.coinbase_pairs
     ADD CONSTRAINT coinbase_pairs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: coinbase_rates coinbase_rates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_rates
+    ADD CONSTRAINT coinbase_rates_pkey PRIMARY KEY (id);
 
 
 --
@@ -264,11 +317,33 @@ CREATE INDEX index_coinbase_pairs_on_quote_currency_id ON public.coinbase_pairs 
 
 
 --
+-- Name: index_coinbase_rates_on_pair_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_coinbase_rates_on_pair_id ON public.coinbase_rates USING btree (pair_id);
+
+
+--
+-- Name: index_coinbase_rates_on_time_and_interval; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_coinbase_rates_on_time_and_interval ON public.coinbase_rates USING btree ("time", "interval");
+
+
+--
 -- Name: coinbase_pairs fk_rails_47856eb3e3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.coinbase_pairs
     ADD CONSTRAINT fk_rails_47856eb3e3 FOREIGN KEY (quote_currency_id) REFERENCES public.coinbase_currencies(id);
+
+
+--
+-- Name: coinbase_rates fk_rails_7a1c561627; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coinbase_rates
+    ADD CONSTRAINT fk_rails_7a1c561627 FOREIGN KEY (pair_id) REFERENCES public.coinbase_pairs(id);
 
 
 --
@@ -290,6 +365,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210123182136'),
 ('20210123184318'),
 ('20210123185328'),
-('20210124005425');
+('20210124005425'),
+('20210124220943');
 
 

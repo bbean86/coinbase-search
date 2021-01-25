@@ -17,6 +17,7 @@ class ExecuteSearch
     validate_sort
     @query_params = params
     @coinbase_client = CoinbaseClient.new conn(adapter, stubs)
+    query_params[:interval] = query_params[:interval]&.to_i
   end
 
   def execute
@@ -38,6 +39,8 @@ class ExecuteSearch
       errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Currency.allowed_sort_columns.include?(sort)
     when Search::SEARCH_TYPES[:pairs]
       errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Pair.allowed_sort_columns.include?(sort)
+    when Search::SEARCH_TYPES[:rates]
+      errors << { message: "Sort not supported: #{sort}" } unless Coinbase::Rate.allowed_sort_columns.include?(sort)
     end
   end
 
@@ -118,9 +121,68 @@ class ExecuteSearch
     when Search::SEARCH_TYPES[:pairs]
       populate_pairs
       populate_pairs_result(search)
+    when Search::SEARCH_TYPES[:rates]
+      populate_rates
+      populate_rates_result(search)
     else
       raise "#{search.search_type} search not yet implemented"
     end
+  end
+
+  # only populates first 300 rates
+  def populate_rates
+    coinbase_client.rates(query_params[:symbols], rates_start, rates_end, query_params[:interval]).each do |rates_response|
+      rates_response[:pair] = find_or_create_pair(rates_response.delete(:symbols))
+      Coinbase::Rate.find_or_create_by time: rates_response[:time], interval: rates_response[:interval] do |rt|
+        rt.assign_attributes(rates_response)
+      end
+    end
+  end
+
+  def rates_start
+    return unless cursor.present?
+
+    direction, unix = Base64.decode64(cursor).split('__')
+    return Time.at(unix.to_i).iso8601 if direction == 'after'
+
+    hours = ((300 * (query_params[:interval] || 60)) / 60) / 60
+    (Time.at(unix.to_i) - hours.hours).iso8601
+  end
+
+  def rates_end
+    return unless cursor.present?
+
+    direction, unix = Base64.decode64(cursor).split('__')
+    return Time.at(unix.to_i).iso8601 if direction == 'before'
+
+    hours = ((300 * (query_params[:interval] || 60)) / 60) / 60
+    (Time.at(unix.to_i) + hours.hours).iso8601
+  end
+
+  def find_or_create_pair(symbols)
+    pair = Coinbase::Pair.find_by symbols: symbols
+    return pair if pair.present?
+
+    pair_response = coinbase_client.pair(symbols)
+    return unless pair_response.present?
+
+    pair_response[:base_currency] = find_or_create_currency(pair_response[:base_currency])
+    pair_response[:quote_currency] = find_or_create_currency(pair_response[:quote_currency])
+
+    Coinbase::Pair.create pair_response
+  end
+
+  def populate_rates_result(search)
+    search.result = RateBlueprint.render_as_hash rates.limit(limit).paginated(cursor)
+    search.save
+  end
+
+  def rates
+    @rates ||= Coinbase::Rate
+               .order(sort || :time)
+               .includes(:pair)
+               .by_symbols(query_params[:symbols])
+               .by_interval(query_params[:interval] || 60)
   end
 
   def populate_pairs
@@ -194,6 +256,8 @@ class ExecuteSearch
       currencies_cursor(search)
     when Search::SEARCH_TYPES[:pairs]
       pairs_cursor(search)
+    when Search::SEARCH_TYPES[:rates]
+      rates_cursor(search)
     end
   end
 
@@ -217,6 +281,28 @@ class ExecuteSearch
     previous_symbols = first_search_result_symbols(search) == first_pair_symbols ? nil : first_search_result_symbols(search)
     next_symbols = last_search_result_symbols(search) == last_pair_symbols ? nil : last_search_result_symbols(search)
     cursor_hash(previous_symbols, next_symbols)
+  end
+
+  def rates_cursor(search)
+    previous_time = first_search_result_time(search) == first_rate_time ? rates_previous_time : first_search_result_time(search)
+    next_time = last_search_result_time(search) == last_rate_time ? rates_next_time : last_search_result_time(search)
+    cursor_hash(previous_time, next_time)
+  end
+
+  def rates_next_time
+    sort&.include?('DESC') ? last_rate_time : nil
+  end
+
+  def rates_previous_time
+    sort&.include?('DESC') ? nil : first_rate_time
+  end
+
+  def first_search_result_time(search)
+    @first_search_result_rates ||= search.result.any? && Time.parse(search.result.first['time']).to_i
+  end
+
+  def last_search_result_time(search)
+    @last_search_result_rates ||= search.result.any? && Time.parse(search.result.last['time']).to_i
   end
 
   def first_search_result_symbols(search)
@@ -249,6 +335,14 @@ class ExecuteSearch
 
   def last_currency_name
     currencies_by_name.last&.name
+  end
+
+  def first_rate_time
+    rates.first&.time&.to_i
+  end
+
+  def last_rate_time
+    rates.last&.time&.to_i
   end
 
   def cursor_hash(previous, subsequent)
