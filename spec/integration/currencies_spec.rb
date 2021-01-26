@@ -33,7 +33,7 @@ describe 'Currencies API' do
                 in: :query,
                 type: :string,
                 description: 'contains the cursor for pagination to start from, in Base64',
-                example: CGI.escape(Base64.encode64('after__Bitcoin'))
+                example: CGI.escape(Base64.strict_encode64('after__Bitcoin'))
 
       parameter name: :sort,
                 in: :query,
@@ -43,7 +43,7 @@ describe 'Currencies API' do
                 enum: Coinbase::Currency.allowed_sort_columns
 
       let(:limit) { 10 }
-      let(:cursor) { Base64.encode64('before__Bitcoin') }
+      let(:cursor) { Base64.strict_encode64('before__Bitcoin') }
       let(:sort) { 'name DESC' }
       let(:symbol) { '' }
       let(:Authorization) { 'Bearer 73e2f213f7d875e9e62798b61d3c275ec63f2efe' }

@@ -10,7 +10,9 @@ RSpec.describe Coinbase::Pair, type: :model do
   let(:usd) { Coinbase::Currency.create name: 'United States Dollar', symbol: 'USD' }
   let(:eth) { Coinbase::Currency.create name: 'Ether', symbol: 'ETH' }
   let(:aave) { Coinbase::Currency.create name: 'Aave', symbol: 'AAVE' }
-  let!(:aave_btc) { Coinbase::Pair.create base_currency: aave, quote_currency: btc, symbols: 'AAVE-BTC', status: 'online' }
+  let!(:aave_btc) do
+    Coinbase::Pair.create base_currency: aave, quote_currency: btc, symbols: 'AAVE-BTC', status: 'online'
+  end
   let!(:btc_usd) { Coinbase::Pair.create base_currency: btc, quote_currency: usd, symbols: 'BTC-USD', status: 'online' }
   let!(:eth_usd) { Coinbase::Pair.create base_currency: eth, quote_currency: usd, symbols: 'ETH-USD', status: 'online' }
 
@@ -45,7 +47,7 @@ RSpec.describe Coinbase::Pair, type: :model do
   end
 
   describe '.paginated' do
-    let(:result) { Coinbase::Pair.paginated(Base64.encode64('after__BTC-USD')) }
+    let(:result) { Coinbase::Pair.paginated(Base64.strict_encode64('after__BTC-USD')) }
 
     it 'returns Pairs indicated by the cursor' do
       expect(result).to eq([eth_usd])

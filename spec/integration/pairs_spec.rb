@@ -38,7 +38,7 @@ describe 'Pairs API' do
                 in: :query,
                 type: :string,
                 description: 'contains the cursor for pagination to start from, in Base64',
-                example: CGI.escape(Base64.encode64('before__BTC-USD'))
+                example: CGI.escape(Base64.strict_encode64('before__BTC-USD'))
 
       parameter name: :sort,
                 in: :query,
@@ -48,7 +48,7 @@ describe 'Pairs API' do
                 enum: Coinbase::Pair.allowed_sort_columns
 
       let(:limit) { 10 }
-      let(:cursor) { Base64.encode64('before__BTC-USD') }
+      let(:cursor) { Base64.strict_encode64('before__BTC-USD') }
       let(:sort) { 'symbols DESC' }
       let(:base_currency) { nil }
       let(:quote_currency) { nil }
@@ -139,7 +139,7 @@ describe 'Pairs API' do
                 in: :query,
                 type: :string,
                 description: 'contains the cursor for pagination to start from, in Base64',
-                example: CGI.escape(Base64.encode64("before__#{Time.now.to_i}"))
+                example: CGI.escape(Base64.strict_encode64("before__#{Time.now.to_i}"))
 
       parameter name: :sort,
                 in: :query,
@@ -155,7 +155,7 @@ describe 'Pairs API' do
                 example: 60
 
       let(:limit) { 10 }
-      let(:cursor) { Base64.encode64("before__#{Time.now.to_i}") }
+      let(:cursor) { Base64.strict_encode64("before__#{Time.now.to_i}") }
       let(:sort) { 'time ASC' }
       let(:interval) { 60 }
       let(:symbols) { 'BTC-USD' }

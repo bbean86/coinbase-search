@@ -35,7 +35,7 @@ RSpec.describe Coinbase::Currency, type: :model do
   end
 
   describe '.paginated' do
-    let(:result) { Coinbase::Currency.paginated(Base64.encode64('after__Aave')) }
+    let(:result) { Coinbase::Currency.paginated(Base64.strict_encode64('after__Aave')) }
 
     it 'returns Pairs indicated by the cursor' do
       expect(result).to eq([btc, bch])

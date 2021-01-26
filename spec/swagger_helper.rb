@@ -28,6 +28,14 @@ RSpec.configure do |config|
               default: 'localhost:3000'
             }
           }
+        },
+        {
+          url: 'https://{productionHost}',
+          variables: {
+            productionHost: {
+              default: 'coinbase-search-api.herokuapp.com/'
+            }
+          }
         }
       ],
       components: {

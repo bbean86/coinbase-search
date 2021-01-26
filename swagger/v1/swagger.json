@@ -53,7 +53,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
-            "example": "YWZ0ZXJfX0JpdGNvaW4%3D%0A",
+            "example": "YWZ0ZXJfX0JpdGNvaW4%3D",
             "schema": {
               "type": "string"
             }
@@ -195,7 +195,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
-            "example": "YmVmb3JlX19CVEMtVVNE%0A",
+            "example": "YmVmb3JlX19CVEMtVVNE",
             "schema": {
               "type": "string"
             }
@@ -327,7 +327,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
-            "example": "YmVmb3JlX18xNjExNjE5Nzcy%0A",
+            "example": "YmVmb3JlX18xNjExNjIxNTA3",
             "schema": {
               "type": "string"
             }
@@ -446,6 +446,14 @@
       "variables": {
         "defaultHost": {
           "default": "localhost:3000"
+        }
+      }
+    },
+    {
+      "url": "https://{productionHost}",
+      "variables": {
+        "productionHost": {
+          "default": "coinbase-search-api.herokuapp.com/"
         }
       }
     }
