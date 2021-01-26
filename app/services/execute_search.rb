@@ -63,7 +63,7 @@ class ExecuteSearch
 
     return @existing_search unless @existing_search.present? && @existing_search.expires_at <= Time.now
 
-    populate_result(s)
+    populate_result(@existing_search)
   end
 
   def cache_key(search)
