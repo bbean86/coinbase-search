@@ -150,7 +150,7 @@ describe 'Pairs API' do
       parameter name: :interval,
                 in: :query,
                 type: :integer,
-                description: 'contains an integer indicating rate interval in seconds to build candlesticks from',
+                description: 'contains an integer indicating rate interval in seconds to build candlesticks from. Value must be one of 60, 300, 900, 3600, 21600, or 86400. These values are in seconds and correspond to intervals 1 minute, 5 minutes, 15 minutes, 1 hour, 6 hours, and 1 day respectively.',
                 enum: [60, 300, 900, 3600, 21_600, 86_400],
                 example: 60
 

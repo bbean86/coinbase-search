@@ -327,7 +327,7 @@
             "name": "cursor",
             "in": "query",
             "description": "contains the cursor for pagination to start from, in Base64",
-            "example": "YmVmb3JlX18xNjExNjIxNTA3",
+            "example": "YmVmb3JlX18xNjExNjc0ODY0",
             "schema": {
               "type": "string"
             }
@@ -344,7 +344,7 @@
           {
             "name": "interval",
             "in": "query",
-            "description": "contains an integer indicating rate interval in seconds to build candlesticks from",
+            "description": "contains an integer indicating rate interval in seconds to build candlesticks from. Value must be one of 60, 300, 900, 3600, 21600, or 86400. These values are in seconds and correspond to intervals 1 minute, 5 minutes, 15 minutes, 1 hour, 6 hours, and 1 day respectively.",
             "enum": [
               60,
               300,
